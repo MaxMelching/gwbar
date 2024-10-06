@@ -1,0 +1,142 @@
+\ProvidesPackage{gwbar}
+
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+
+\RequirePackage{beamerbasecompatibility}  % -- Standard for beamer packages
+
+
+
+% TODO: handle need for exported_template
+
+% TODO: make optional argument resolution (for template; so provide several sample sizes)?
+
+
+% -- Note: credits for box measuring code to https://tex.stackexchange.com/questions/401377/adjust-logo-height-to-match-frametitle-box-height (this is where all the "<- NEW" markers come from). The rest is mine
+
+\makeatletter
+
+\newlength{\frametitleheight}% <- NEW
+\newlength{\frametitleheightnosubtitle}% <- NEW
+\newsavebox{\beamer@titlebox}% <- NEW
+\newsavebox{\beamer@titleboxnosubtitle}% <- NEW
+
+
+
+\newlength{\xshiftnavbar}
+\setlength{\xshiftnavbar}{0.6\textwidth}
+% \setlength{\xshiftnavbar}{0.6\paperwidth} % Too much on the right
+\newlength{\yshiftpicture}
+
+\newlength{\rightpadding}
+\setlength{\rightpadding}{0.094\paperwidth} % Has to be fitted by hand
+
+\newlength{\signalheight}
+\setlength{\signalheight}{42pt} % Has to be fitted by hand
+
+\newlength{\signalupshift}
+\setlength{\signalupshift}{3pt}
+% \setlength{\signalupshift}{0pt} % Also a viable choice
+
+% \setlength{\yshiftpicture}{-\frametitleheight}%
+% \setlength{\yshiftpicture}{0pt}%
+
+
+
+\defbeamertemplate{frametitle}{gwbar}{%
+% -- Box measurements first
+% -- Note: not having blank lines is important for spacing reasons. Always put a comment in
+  \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
+  \@tempdima=\textwidth%
+  \advance\@tempdima by\beamer@leftmargin%
+  \advance\@tempdima by\beamer@rightmargin%
+% 
+% 
+  \sbox{\beamer@titleboxnosubtitle}{% <- NEW
+      \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}
+        \usebeamerfont{frametitle}%
+        \vbox{}\vskip-1ex%
+        \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
+        \strut\insertframetitle\strut\par%
+        \vskip-1ex%
+        \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
+      \end{beamercolorbox}%
+     }% <- NEW
+     % \usebox{\beamer@titleboxnosubtitle}% <- NEW
+% 
+% 
+  \sbox{\beamer@titlebox}{% <- NEW
+      \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}
+        \usebeamerfont{frametitle}%
+        \vbox{}\vskip-1ex%
+        \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
+        \strut\insertframetitle\strut\par%
+        {%
+          \ifx\insertframesubtitle\@empty%
+          \else%
+          {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
+          \fi
+        }%
+        \vskip-1ex%
+        \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
+      \end{beamercolorbox}%
+     }% <- NEW
+     \usebox{\beamer@titlebox}% <- NEW
+     
+    \settoheight{\frametitleheight}{\usebox{\beamer@titlebox}}% <- NEW
+    \addtolength{\frametitleheight}{\headheight}
+    
+    \settoheight{\frametitleheightnosubtitle}{\usebox{\beamer@titleboxnosubtitle}}% <- NEW
+    \addtolength{\frametitleheightnosubtitle}{\headheight}
+% 
+% 
+\setlength{\yshiftpicture}{-\frametitleheightnosubtitle}%
+% 
+% 
+\begin{tikzpicture}[remember picture,overlay,line width=0.7pt, shift={($(current page.north west)+(0pt,\yshiftpicture)$)}]
+% -- NOTE: order in this picture matters for color and overlay etc (which is why we often have part one and two). Also, spaces don't matter in tikzpictures
+
+
+    % -- First part of filling. Important in case case where signalupshift is non-zero (and if no framesubtitle is set)
+    \ifx\insertframesubtitle\@empty%
+        \ifdim\signalupshift=0pt
+        \else
+        \draw[white, fill, shift={(0, -\frametitleheight+\frametitleheightnosubtitle)}] (0, 0) rectangle (\paperwidth,\signalupshift);
+        \fi
+    \fi
+
+
+    % -- First part of signal
+	\draw[fg, smooth, shift={(\xshiftnavbar,\signalupshift)}, xscale=5.12, yscale=0.615] plot file {exported_template.txt}; % xscale, yscale were found empirically; important: xscale AFTER shift
+	
+    % -- First part of padding to left
+	\draw[fg, smooth, shift={(0,\signalupshift)}] (0, 0) -- (\xshiftnavbar, 0);
+	\draw[gray!50, opacity=0.42, smooth, shift={(0,\signalupshift)}] (0, 0) -- (\xshiftnavbar, 0);
+
+ 
+	% -- First part of padding to right
+	\draw[fg, smooth, shift={(0,\signalupshift)}] ({\paperwidth - \rightpadding}, 0) -- (\paperwidth, 0);
+
+
+    % -- Second part of filling
+    \draw[white, fill, shift={(\xshiftnavbar,0)}] ({(\paperwidth - \xshiftnavbar) * \insertframenumber / \inserttotalframenumber}, -\signalheight) rectangle (0.5\paperwidth, 0); % -- Hide part of signal as part of progress bar
+    
+	\draw[bg, fill, shift={(\xshiftnavbar,0)}] ({(\paperwidth - \xshiftnavbar) * \insertframenumber / \inserttotalframenumber}, \frametitleheight) rectangle (0.5\paperwidth, -\frametitleheight+\frametitleheightnosubtitle); % -- Refill titlebox
+	
+    \ifx\insertframesubtitle\@empty%
+    \draw[white, fill, shift={(\xshiftnavbar, -\frametitleheight+\frametitleheightnosubtitle)}] ({(\paperwidth - \xshiftnavbar) * \insertframenumber / \inserttotalframenumber}, 0pt) rectangle (0.5\paperwidth, \signalupshift); % -- Overpaint difference between titlebox and upshifted signal
+    \fi
+
+
+    % -- Second part of signal. Shaded one that is hidden at current progress
+	\draw[gray!50, opacity=0.42, smooth, shift={(\xshiftnavbar,\signalupshift)}, xscale=5.12, yscale=0.615] plot file {exported_template.txt}; % -- Numbers here are found by hand
+
+
+    % -- Second part of padding to right
+	\draw[gray!50, opacity=0.42, smooth, shift={(0,\signalupshift)}] ({\paperwidth - \rightpadding}, 0) -- (\paperwidth, 0);
+\end{tikzpicture}%
+% 
+\vspace*{-0.25\signalheight}
+}
+
+\makeatother

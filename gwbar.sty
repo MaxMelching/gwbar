@@ -13,177 +13,207 @@
 \RequirePackage{tikz}
 \usetikzlibrary{calc}
 
-\RequirePackage{beamerbasecompatibility}  % -- Standard for beamer packages
+\RequirePackage{beamerbasecompatibility}  % Standard for beamer packages
 
 
-
-% TODO: handle need for exported_template
-
-% TODO: make optional argument resolution (for template; so provide several sample sizes)?
+% TODO: planned arguments are: leftpadding, rightpadding, signalheight, vspace at the bottom
 
 
-% -- Note: credits for box measuring code to https://tex.stackexchange.com/questions/401377/adjust-logo-height-to-match-frametitle-box-height (this is where all the "<- NEW" markers come from). The rest is mine
+% -- Note: credits for box measuring code to https://tex.stackexchange.com/questions/401377/adjust-logo-height-to-match-frametitle-box-height
+% -- (this is where all the "<- NEW" markers come from). The rest is mine.
 
 \makeatletter
 
+% -- Box lengths
 \newlength{\frametitleheight}% <- NEW
 \newlength{\frametitleheightnosubtitle}% <- NEW
 \newsavebox{\beamer@titlebox}% <- NEW
 \newsavebox{\beamer@titleboxnosubtitle}% <- NEW
 
 
+% -- gwbar lengths
+\newlength{\leftpadding}  % Where signal starts, measured from left end of frame
+\setlength{\leftpadding}{0.6\textwidth}
 
-\newlength{\leftpadding}
-% \setlength{\leftpadding}{0.6\textwidth}
-\setlength{\leftpadding}{0.5\textwidth}
-
-\newlength{\rightpadding}
+\newlength{\rightpadding}  % Where signal ends, measured from right end of frame
 \setlength{\rightpadding}{0.1\paperwidth} % Has to be fitted by hand
 
-\newlength{\signalheight}
-\newlength{\signalwidth}
+\newlength{\signalheight}  % Set automatically in template (at the moment)
+\newlength{\signalwidth}  % Set automatically based on leftpadding, rightpadding
 
-\newlength{\signalupshift}
-\setlength{\signalupshift}{3pt}
-% \setlength{\signalupshift}{0pt} % Also a viable choice
+\newlength{\signalupshift}  % Amount by which signal is shifted up from where frametitle ends and subtitle begins
+% \setlength{\signalupshift}{0pt}
+\setlength{\signalupshift}{3pt}  % Fiducial value
 
-\newlength{\yshiftpicture}
-% \setlength{\yshiftpicture}{-\frametitleheight}%
-% \setlength{\yshiftpicture}{0pt}%
-
-\newlength{\rectheight}
-\setlength{\rectheight}{42pt} % Has to be fitted by hand
+\newlength{\yshiftpicture}  % Set automatically in template
 
 
 
 \defbeamertemplate{frametitle}{gwbar}{%
 % -- Box measurements first
-% -- Note: not having blank lines is important for spacing reasons. Always put a comment in
-  \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
-  \@tempdima=\textwidth%
-  \advance\@tempdima by\beamer@leftmargin%
-  \advance\@tempdima by\beamer@rightmargin%
+% -- NOTE: not having blank lines is important for spacing reasons.
+% -- Always put a comment in.
+    \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
+    \@tempdima=\textwidth%
+    \advance\@tempdima by\beamer@leftmargin%
+    \advance\@tempdima by\beamer@rightmargin%
 % 
 % 
-  \sbox{\beamer@titleboxnosubtitle}{% <- NEW
-      \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}
-        \usebeamerfont{frametitle}%
-        \vbox{}\vskip-1ex%
-        \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
-        \strut\insertframetitle\strut\par%
-        \vskip-1ex%
-        \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
-      \end{beamercolorbox}%
-     }% <- NEW
-     % \usebox{\beamer@titleboxnosubtitle}% <- NEW
+    \sbox{\beamer@titleboxnosubtitle}{% <- NEW
+        \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}
+            \usebeamerfont{frametitle}%
+            \vbox{}\vskip-1ex%
+            \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
+            \strut\insertframetitle\strut\par%
+            \vskip-1ex%
+            \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
+        \end{beamercolorbox}%
+    }% <- NEW
+    % \usebox{\beamer@titleboxnosubtitle}% <- NEW
 % 
 % 
-  \sbox{\beamer@titlebox}{% <- NEW
-      \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}
-        \usebeamerfont{frametitle}%
-        \vbox{}\vskip-1ex%
-        \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
-        \strut\insertframetitle\strut\par%
-        {%
-          \ifx\insertframesubtitle\@empty%
-          \else%
-          {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
-          \fi
-        }%
-        \vskip-1ex%
-        \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
-      \end{beamercolorbox}%
-     }% <- NEW
-     \usebox{\beamer@titlebox}% <- NEW
-     
+    \sbox{\beamer@titlebox}{% <- NEW
+        \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}
+            \usebeamerfont{frametitle}%
+            \vbox{}\vskip-1ex%
+            \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
+            \strut\insertframetitle\strut\par%
+            {%
+            \ifx\insertframesubtitle\@empty%
+            \else%
+            {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
+            \fi
+            }%
+            \vskip-1ex%
+            \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
+        \end{beamercolorbox}%
+    }% <- NEW
+    \usebox{\beamer@titlebox}% <- NEW
+
     \settoheight{\frametitleheight}{\usebox{\beamer@titlebox}}% <- NEW
     \addtolength{\frametitleheight}{\headheight}
-    
+
     \settoheight{\frametitleheightnosubtitle}{\usebox{\beamer@titleboxnosubtitle}}% <- NEW
     \addtolength{\frametitleheightnosubtitle}{\headheight}
 % 
 % 
-\setlength{\yshiftpicture}{-\frametitleheightnosubtitle}%
+    \setlength{\yshiftpicture}{-\frametitleheightnosubtitle}%
 % 
-\setlength{\signalwidth}{\paperwidth-\leftpadding-\rightpadding}
-% \setlength{\signalheight}{\frametitleheight-\frametitleheightnosubtitle+\signalupshift}
-% TODO: what to do if no subtitle?
-\setlength{\signalheight}{\frametitleheightnosubtitle-\signalupshift-2pt}
-% -\signalupshift to account for potential asymmetry.
-% -2pt for some space between top of file and signal end
+    \setlength{\signalwidth}{\paperwidth-\leftpadding-\rightpadding}
+    % \setlength{\signalheight}{\frametitleheight-\frametitleheightnosubtitle+\signalupshift}
+    % TODO: what to do if no subtitle?
+    \setlength{\signalheight}{\frametitleheightnosubtitle-\signalupshift-2pt}
+    % -\signalupshift to account for potential asymmetry.
+    % -2pt for some space between top of file and signal end
 % 
 % 
-\begin{tikzpicture}[remember picture,overlay,line width=0.7pt, shift={($(current page.north west)+(0pt,\yshiftpicture)$)}]
-% -- NOTE: order in this picture matters for color and overlay etc (which is why we often have part one and two). Also, spaces don't matter in tikzpictures
-
-
-    % -- First part of filling. Important in case case where signalupshift is non-zero (and if no framesubtitle is set)
-    \ifx\insertframesubtitle\@empty%
-        \ifdim\signalupshift=0pt
-        \else
-        \draw[white, fill, shift={(0, -\frametitleheight+\frametitleheightnosubtitle)}] (0, 0) rectangle (\paperwidth,\signalupshift);
-        \fi
-    \fi
-
-
-    % -- First layer of signal    
-    \begin{scope}[
-      x=\signalwidth,
-      y=\signalheight,
-      % x=\paperwidth-\leftpadding-\rightpadding,
-      % y=\frametitleheightnosubtitle-\signalupshift-2pt,
+    \begin{tikzpicture}[
+        remember picture,
+        overlay,
+        line width=0.7pt,
+        shift={($(current page.north west)+(0pt,\yshiftpicture)$)},
     ]
-        \draw[fg, smooth, shift={(\leftpadding,\signalupshift)},
-            % xscale=(\paperwidth-\leftpadding-\rightpadding)/\paperwidth,
-            % yscale=0.615,
-        ] plot file {exported_template.txt}; % xscale, yscale were found empirically; important: xscale AFTER shift
-    \end{scope}
-  
-	
-    % -- First layer of padding to left
-	\draw[fg, smooth, shift={(0,\signalupshift)}] (0, 0) -- (\leftpadding, 0);
-	\draw[gray!50, opacity=0.42, smooth, shift={(0,\signalupshift)}] (0, 0) -- (\leftpadding, 0);
-
- 
-	% -- First layer of padding to right
-	\draw[fg, smooth, shift={(0,\signalupshift)}] ({\paperwidth - \rightpadding}, 0) -- (\paperwidth, 0);
+    % -- NOTE: order in this picture matters for color and overlay etc
+    % -- (which is why we often have part one and two). Also, spaces don't
+    % -- matter in tikzpictures, at least no issues with that
 
 
-    % -- Second part of filling
-    % \draw[white, fill, shift={(\leftpadding,0)}] ({(\paperwidth - \leftpadding) * \insertframenumber / \inserttotalframenumber}, -\rectheight) rectangle (0.5\paperwidth, 0); % -- Hide part of signal as part of progress bar
-    \draw[white, fill, shift={(\leftpadding,0)}] ({(\paperwidth - \leftpadding) * \insertframenumber / \inserttotalframenumber}, -\rectheight) rectangle (\paperwidth-\leftpadding, 0); % -- Hide part of signal as part of progress bar
-    % \draw[white, fill, shift={(\leftpadding,0)}] ({(\paperwidth - \leftpadding) * \insertframenumber / \inserttotalframenumber}, -\signalheight) rectangle (\paperwidth-\leftpadding, 0); % -- Hide part of signal as part of progress bar
+        % -- First part of filling. Important in case case where signalupshift is non-zero (and if no framesubtitle is set)
+        \ifx\insertframesubtitle\@empty%
+            \ifdim\signalupshift=0pt
+            \else
+                \draw[
+                    white,
+                    fill,
+                    shift={(0, -\frametitleheight+\frametitleheightnosubtitle)},
+                ] (0, 0) rectangle (\paperwidth,\signalupshift);
+            \fi
+        \fi
+
+
+        % -- First layer of signal    
+        \begin{scope}[
+            x=\signalwidth,
+            y=\signalheight,
+        ]
+            \draw[
+                fg,
+                smooth,
+                shift={(\leftpadding,\signalupshift)},
+            ] plot file {exported_template.txt};
+            % NOTE: signal is assumed ot have times in [0,1] and maximum amplitude of +1/-1
+        \end{scope}
     
-	  % \draw[bg, fill, shift={(\leftpadding,0)}] ({(\paperwidth - \leftpadding) * \insertframenumber / \inserttotalframenumber}, \frametitleheight) rectangle (0.5\paperwidth, -\frametitleheight+\frametitleheightnosubtitle); % -- Refill titlebox
-	  \draw[bg, fill, shift={(\leftpadding,0)}] ({(\paperwidth - \leftpadding) * \insertframenumber / \inserttotalframenumber}, \frametitleheight) rectangle (\paperwidth-\leftpadding, -\frametitleheight+\frametitleheightnosubtitle); % -- Refill titlebox
-    % These two lines cause filling issues -> ahh, I think the 0.5\paperwidth there are issue
+        
+        % -- First layer of padding to left
+        \draw[
+            fg,
+            smooth,
+            shift={(0,\signalupshift)},
+        ] (0, 0) -- (\leftpadding, 0);
+        
+        \draw[
+            gray!50,
+            opacity=0.42,
+            smooth,
+            shift={(0,\signalupshift)},
+        ] (0, 0) -- (\leftpadding, 0);
+
     
-    \ifx\insertframesubtitle\@empty%
-        % \draw[white, fill, shift={(\leftpadding, -\frametitleheight+\frametitleheightnosubtitle)}] ({(\paperwidth - \leftpadding) * \insertframenumber / \inserttotalframenumber}, 0pt) rectangle (0.5\paperwidth, \signalupshift); % -- Overpaint difference between titlebox and upshifted signal
-        \draw[white, fill, shift={(\leftpadding, -\frametitleheight+\frametitleheightnosubtitle)}] ({(\paperwidth - \leftpadding) * \insertframenumber / \inserttotalframenumber}, 0pt) rectangle (\paperwidth-\leftpadding, \signalupshift); % -- Overpaint difference between titlebox and upshifted signal
-    \fi
+        % -- First layer of padding to right
+        \draw[
+            fg,
+            smooth,
+            shift={(0,\signalupshift)},
+        ] ({\paperwidth - \rightpadding}, 0) -- (\paperwidth, 0);
 
 
-    % -- Second layer of signal. Shaded one that is hidden at current progress
-  
-  \begin{scope}[
-    x=\signalwidth,
-    y=\signalheight,
-    % x=\paperwidth-\leftpadding-\rightpadding,
-    % y=\frametitleheightnosubtitle-\signalupshift-2pt,
-  ]
-	  \draw[gray!50, opacity=0.42, smooth, shift={(\leftpadding,\signalupshift)},
-      % xscale=5.12,
-      % yscale=0.615
-    ] plot file {exported_template.txt}; % -- Numbers here are found by hand
-  \end{scope}
+        % -- Second part of filling
+        \draw[
+            white,
+            fill,
+            shift={(\leftpadding,0)},
+        ] ({(\paperwidth - \leftpadding) * \insertframenumber / \inserttotalframenumber}, -\signalheight) rectangle (\paperwidth-\leftpadding, 0);
+        % Hide part of signal for progress bar effect
+        
+        \draw[
+            bg,
+            fill,
+            shift={(\leftpadding,0)},
+        ] ({(\paperwidth - \leftpadding) * \insertframenumber / \inserttotalframenumber}, \frametitleheight) rectangle (\paperwidth-\leftpadding, -\frametitleheight+\frametitleheightnosubtitle);
+        % Refill titlebox
+        
+        \ifx\insertframesubtitle\@empty%
+            \draw[
+                white,
+                fill,
+                shift={(\leftpadding, -\frametitleheight+\frametitleheightnosubtitle)},
+            ] ({(\paperwidth - \leftpadding) * \insertframenumber / \inserttotalframenumber}, 0pt) rectangle (\paperwidth-\leftpadding, \signalupshift);
+            % Paint over difference between titlebox and upshifted signal
+        \fi
 
 
-    % -- Second layer of padding to right
-	\draw[gray!50, opacity=0.42, smooth, shift={(0,\signalupshift)}] ({\paperwidth - \rightpadding}, 0) -- (\paperwidth, 0);
-\end{tikzpicture}%
-% 
-\vspace*{-0.25\rectheight}
+        % -- Second layer of signal. Shaded one that is hidden at current progress
+        \begin{scope}[
+            x=\signalwidth,
+            y=\signalheight,
+        ]
+            \draw[
+                gray!50,
+                opacity=0.42,
+                smooth,
+                shift={(\leftpadding,\signalupshift)},
+            ] plot file {exported_template.txt};
+            % NOTE: signal is assumed ot have times in [0,1] and maximum amplitude of +1/-1
+        \end{scope}
+
+
+        % -- Second layer of padding to right
+        \draw[gray!50, opacity=0.42, smooth, shift={(0,\signalupshift)}] ({\paperwidth - \rightpadding}, 0) -- (\paperwidth, 0);
+    \end{tikzpicture}%
+    % 
+    % \vspace*{-0.3\signalheight}% Account for some of the offset, while not pushing into the signal
+    \vspace*{-\frametitleheight+\frametitleheightnosubtitle}%
 }
 
 \makeatother

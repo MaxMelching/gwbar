@@ -4,7 +4,11 @@
 \usepackage{heuristica} % Just for cosmetic purposes
 
 
-\usepackage{gwbar}
+% -- Since .sty and .txt are not in same directory, we have to give the
+% -- templatefile argument and use ../gwbar
+\usepackage[
+    templatefile="../exported_template.txt",
+]{../gwbar}
 \setbeamertemplate{frametitle}[gwbar]
 
 

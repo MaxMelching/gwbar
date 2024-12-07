@@ -8,6 +8,13 @@
 
 \ProvidesPackage{gwbar}
 
+\newcommand{\template@name}{"exported_template.txt"}
+
+\RequirePackage{xkeyval}
+\DeclareOptionX{templatefile}{\renewcommand{\template@name}{#1}}
+\ProcessOptionsX
+
+
 \RequirePackage{calc}  % For length calculations
 
 \RequirePackage{tikz}
@@ -140,7 +147,7 @@
                 fg,
                 smooth,
                 shift={(\leftpadding,\signalupshift)},
-            ] plot file {exported_template.txt};
+            ] plot file {\template@name};
             % NOTE: signal is assumed ot have times in [0,1] and maximum amplitude of +1/-1
         \end{scope}
     
@@ -203,7 +210,7 @@
                 opacity=0.42,
                 smooth,
                 shift={(\leftpadding,\signalupshift)},
-            ] plot file {exported_template.txt};
+                ] plot file {\template@name};
             % NOTE: signal is assumed ot have times in [0,1] and maximum amplitude of +1/-1
         \end{scope}
 

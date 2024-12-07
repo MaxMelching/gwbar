@@ -1,5 +1,17 @@
-example.*
+*.aux
 
-!example.tex
+*.log
 
-!example.pdf
+*.synctex.gz
+
+*.fls
+
+*.fdb_latexmk
+
+*.nav
+
+*.out
+
+*.snm
+
+*.toc

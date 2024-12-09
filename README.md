@@ -1,6 +1,6 @@
 # GWBar
 
-A gravitational wave progressbar template for LaTeX beamer presentations.
+A gravitational-wave progressbar template for LaTeX beamer presentations.
 
 ## Usage
 

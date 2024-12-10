@@ -59,7 +59,7 @@ print(h.times)
 
 # -- Before exporting: rescale signal to have maximum amplitude of 1
 # -- and times between 0 and 1. This is assumed in plotting routine.
-def signal_export(signal: TimeSeries) -> None:
+def signal_export(signal: TimeSeries, name: str) -> None:
     """
     Export GW signal in time domain for format required by gwbar.
 
@@ -72,7 +72,7 @@ def signal_export(signal: TimeSeries) -> None:
     signal_export /= signal_export.abs().max()
     signal_export.times = np.linspace(0, 1, num=signal_export.size, endpoint=True)
 
-    np.savetxt(f'exported_template.txt', np.transpose([signal_export.times, signal_export.data]))
+    np.savetxt(name, np.transpose([signal_export.times, signal_export.data]))
 
-# signal_export(h)
-signal_export(h_tapered)
+# signal_export(h, 'generic_template.txt')
+signal_export(h_tapered, 'generic_template.txt')

@@ -9,6 +9,8 @@
 \usepackage[
     % templatefile="../generic_template.txt",
     templatefile="../eccentric_template.txt",
+    % leftpadding=0.2\textwidth,  % Where signal begins from (distance from left border)
+    % rightpadding=10pt,  % Where signal ends (distance from right border)
 ]{../gwbar}
 \setbeamertemplate{frametitle}[gwbar]
 
@@ -19,8 +21,7 @@
 % \setbeamerfont{framesubtitle}{size=\large}
 
 
-% -- Slightly hacky way of changing paddings. Will be controlled via
-% -- keyword in the future
+% -- Equivalent way of changing paddings: set corresponding lengths here
 % \setlength{\leftpadding}{0.4\textwidth}
 % \setlength{\rightpadding}{0.1\textwidth}
 

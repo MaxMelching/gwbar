@@ -8,10 +8,20 @@
 
 \ProvidesPackage{gwbar}
 
+% -- Option definitions
 \newcommand{\template@name}{"generic_template.txt"}
+
+\newlength{\leftpadding}  % Where signal starts, measured from left end of frame
+\setlength{\leftpadding}{0.6\textwidth}
+
+\newlength{\rightpadding}  % Where signal ends, measured from right end of frame
+\setlength{\rightpadding}{0.1\paperwidth} % Has to be fitted by hand
+
 
 \RequirePackage{xkeyval}
 \DeclareOptionX{templatefile}{\renewcommand{\template@name}{#1}}
+\DeclareOptionX{leftpadding}{\setlength{\leftpadding}{#1}}
+\DeclareOptionX{rightpadding}{\setlength{\rightpadding}{#1}}
 \ProcessOptionsX
 
 
@@ -38,13 +48,7 @@
 \newsavebox{\beamer@titleboxnosubtitle}% <- NEW
 
 
-% -- gwbar lengths
-\newlength{\leftpadding}  % Where signal starts, measured from left end of frame
-\setlength{\leftpadding}{0.6\textwidth}
-
-\newlength{\rightpadding}  % Where signal ends, measured from right end of frame
-\setlength{\rightpadding}{0.1\paperwidth} % Has to be fitted by hand
-
+% -- More gwbar lengths
 \newlength{\signalheight}  % Set automatically in template (at the moment)
 \newlength{\signalwidth}  % Set automatically based on leftpadding, rightpadding
 

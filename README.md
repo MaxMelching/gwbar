@@ -19,20 +19,21 @@ location of the `.txt` can also be given as an argument to the package
 
 It is possible to use any waveform you want in the presentation. The only
 requirement for the displaying to work properly is that the values are
-between -1 and +1, and that the times are between 0 and 1. If you have
-some GWPy TimeSeries on hand, this preparation can be done using
-`signal_export` function in accompanying python script.
+between $-1$ and $+1$, and that the times are between $0$ and $1$. If you
+hase some GWPy ``TimeSeries`` on hand, this preparation can be done using
+`signal_export` function in the accompanying python script.
 
 ***Note:*** in case the bar looks misaligned in some compiler like Overleaf,
-this will typically vanish in the exported pdf. I do not know why this happens,
+this will typically disappear in the exported pdf. I do not know why this
+happens, but I have experienced it several times.
 
 ## Examples
 
 To see how this beamertemplate looks like and how it can be used, have
 a look at the `examples` folder in this repository.
-but I have experienced it several times.
 
 ## Plans
 
-- allow for adjustable height and width, location of the signal (by setting
-  rightpadding etc)
+- allow for adjustable height and width of the signal
+
+If you have any ideas or suggestions, please feel free to tell me about them!

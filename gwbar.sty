@@ -59,6 +59,29 @@
 \newlength{\gwbar@yshiftpicture}  % Set automatically in template
 
 
+% -- Define custom styles for all elements, so that they can be customized easily
+\tikzset{
+    gwbar@linelayerone/.style={
+        fg,
+        smooth,
+        line width=0.7pt,
+	},
+    gwbar@linelayertwo/.style={
+        gray!50,
+        opacity=0.42,
+		smooth,
+        line width=0.7pt,
+	},
+    gwbar@fillinglayerone/.style={
+        fill,
+        white,  % Default color of frame background canvas
+	},
+    gwbar@fillinglayertwo/.style={
+        fill,
+        bg,
+	},
+}
+
 
 \defbeamertemplate{frametitle}{gwbar}{%
     % -- Box measurements first
@@ -121,7 +144,6 @@
     \begin{tikzpicture}[
         remember picture,
         overlay,
-        line width=0.7pt,
         shift={($(current page.north west)+(0pt,\gwbar@yshiftpicture)$)},
     ]
         % -- NOTE: order in this picture matters for color and overlay etc
@@ -129,13 +151,12 @@
         % -- matter in tikzpictures, at least no issues with that
 
 
-        % -- First part of filling. Important in case case where signalupshift is non-zero (and if no framesubtitle is set)
+        % -- First part of filling. Important in case where signalupshift is non-zero (and if no framesubtitle is set)
         \ifx\insertframesubtitle\@empty%
             \ifdim\gwbar@signalupshift=0pt
             \else
                 \draw[
-                    white,
-                    fill,
+                    gwbar@fillinglayerone,
                     shift={(0, -\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle)},
                 ] (0, 0) rectangle (\paperwidth, \gwbar@signalupshift);
             \fi
@@ -148,8 +169,7 @@
             y=\gwbar@signalheight,
         ]
             \draw[
-                fg,
-                smooth,
+                gwbar@linelayerone,,
                 shift={(\gwbar@leftpadding, \gwbar@signalupshift)},
             ] plot file {\gwbar@templatefilename};
             % NOTE: signal is assumed ot have times in [0,1] and maximum amplitude of +1/-1
@@ -158,39 +178,33 @@
         
         % -- First layer of padding to left
         \draw[
-            fg,
-            smooth,
+            gwbar@linelayerone,,
             shift={(0, \gwbar@signalupshift)},
         ] (0, 0) -- (\gwbar@leftpadding, 0);
         
         \draw[
-            gray!50,
-            opacity=0.42,
-            smooth,
+            gwbar@linelayertwo,
             shift={(0, \gwbar@signalupshift)},
         ] (0, 0) -- (\gwbar@leftpadding, 0);
 
     
         % -- First layer of padding to right
         \draw[
-            fg,
-            smooth,
+            gwbar@linelayerone,,
             shift={(0, \gwbar@signalupshift)},
         ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
 
 
         % -- Second part of filling
         \draw[
-            white,
-            fill,
+            gwbar@fillinglayerone,
             shift={(\gwbar@leftpadding, 0)},
         ] ({(\paperwidth - \gwbar@leftpadding) * \insertframenumber / \inserttotalframenumber}, -\gwbar@signalheight)
         rectangle (\paperwidth - \gwbar@leftpadding, 0);
         % Hide part of signal for progress bar effect
         
         \draw[
-            bg,
-            fill,
+            gwbar@fillinglayertwo,
             shift={(\gwbar@leftpadding,0)},
         ] ({(\paperwidth - \gwbar@leftpadding) * \insertframenumber / \inserttotalframenumber}, \gwbar@frametitleheight)
         rectangle (\paperwidth - \gwbar@leftpadding, -\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle);
@@ -198,8 +212,7 @@
         
         \ifx\insertframesubtitle\@empty%
             \draw[
-                white,
-                fill,
+                gwbar@fillinglayerone,
                 shift={(\gwbar@leftpadding, -\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle)},
             ] ({(\paperwidth - \gwbar@leftpadding) * \insertframenumber / \inserttotalframenumber}, 0pt)
             rectangle (\paperwidth - \gwbar@leftpadding, \gwbar@signalupshift);
@@ -213,9 +226,7 @@
             y=\gwbar@signalheight,
         ]
             \draw[
-                gray!50,
-                opacity=0.42,
-                smooth,
+                gwbar@linelayertwo,
                 shift={(\gwbar@leftpadding, \gwbar@signalupshift)},
                 ] plot file {\gwbar@templatefilename};
             % NOTE: signal is assumed ot have times in [0,1] and maximum amplitude of +1/-1
@@ -224,9 +235,7 @@
 
         % -- Second layer of padding to right
         \draw[
-            gray!50,
-            opacity=0.42,
-            smooth,
+            gwbar@linelayertwo,
             shift={(0, \gwbar@signalupshift)},
         ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
     \end{tikzpicture}%

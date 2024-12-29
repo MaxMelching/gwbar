@@ -1,0 +1,32 @@
+\documentclass{beamer}
+\usecolortheme{spruce}
+
+\usepackage{heuristica} % Just for cosmetic purposes
+
+
+% -- Since .sty and .txt are not in same directory, we have to give the
+% -- templatefile argument and use ../gwbar
+\usepackage[templatefile="../generic_template.txt"]{../gwbar}
+\setbeamertemplate{frametitle}[gwbar]
+
+
+
+\begin{document}
+
+\begin{frame}[t]{Frame Title}
+This is the first slide
+\end{frame}
+
+\begin{frame}[t]{Frame Title}{Frame Subtitle}
+Slide number 2
+\end{frame}
+
+\begin{frame}[t]{Frame Title}
+Another slide
+\end{frame}
+
+\begin{frame}[t]{Frame Title}{Frame Subtitle}
+This is the last slide
+\end{frame}
+
+\end{document}

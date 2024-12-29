@@ -9,10 +9,10 @@
 \usepackage[
     % templatefile="../generic_template.txt",
     templatefile="../eccentric_template.txt",
-    % leftpadding=0.2\textwidth,  % Where signal begins from (distance from left border)
-    % rightpadding=10pt,  % Where signal ends (distance from right border)
-	% signalheight=1em,  % Hand-fitted to subtitle height with default settings of signalupshift etc. to demonstrate ability
-	% signalupshift=-1em,
+    leftpadding=0.25\textwidth,  % Where signal begins from (distance from left border)
+    rightpadding=10pt,  % Where signal ends (distance from right border)
+    signalheight=1em,  % Hand-fitted to subtitle height
+	% signalupshift=-1em,  % To have signal on end of lower end of framesubtitle
 ]{../gwbar}
 \setbeamertemplate{frametitle}[gwbar]
 
@@ -21,25 +21,6 @@
 % -- (uncomment following lines to test yourself)
 % \setbeamerfont{frametitle}{size=\LARGE}
 % \setbeamerfont{framesubtitle}{size=\large}
-
-
-% -- To see the impact of parameters like signalupshift or signalheight, it is
-% -- very useful to change to styles of boxes used for filling since this is our
-% -- tool to mimick the progressbar effect (uncomment following lines to test yourself).
-% \usepackage{tikz}
-% \usetikzlibrary{patterns}
-% \tikzset{
-%     gwbar@fillinglayerone/.style={
-%         red,
-% 		pattern=north west lines,
-% 		pattern color=red,
-% 	},
-%     gwbar@fillinglayertwo/.style={
-%         blue,
-% 		pattern=north east lines,
-% 		pattern color=blue,
-% 	},
-% }
 
 
 

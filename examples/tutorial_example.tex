@@ -1,0 +1,62 @@
+\documentclass{beamer}
+\usecolortheme{spruce}
+
+\usepackage{heuristica} % Just for cosmetic purposes
+
+
+% -- Since .sty and .txt are not in same directory, we have to give the
+% -- templatefile argument and use ../gwbar
+\usepackage[
+    % templatefile="../generic_template.txt",
+    templatefile="../eccentric_template.txt",
+    signalupshift=-1em,
+    signalheight=2em,
+]{../gwbar}
+\setbeamertemplate{frametitle}[gwbar]
+
+
+% -- Important: changing font sizes does not change alignment of things
+% -- (uncomment following lines to test yourself)
+% \setbeamerfont{frametitle}{size=\LARGE}
+% \setbeamerfont{framesubtitle}{size=\large}
+
+
+% -- To see the impact of parameters like signalupshift or signalheight, it is
+% -- very useful to change to styles of boxes used for filling since this is our
+% -- tool to mimick the progressbar effect (uncomment following lines to test yourself).
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\tikzset{
+    gwbar@fillinglayerone/.style={
+        red,
+		pattern=north west lines,
+		pattern color=red,
+	},
+    gwbar@fillinglayertwo/.style={
+        blue,
+		pattern=north east lines,
+		pattern color=blue,
+	},
+}
+
+
+
+\begin{document}
+
+\begin{frame}[t]{Frame Title}
+This is the first slide
+\end{frame}
+
+\begin{frame}[t]{Frame Title}{Frame Subtitle}
+Slide number 2
+\end{frame}
+
+\begin{frame}[t]{Frame Title}
+Another slide
+\end{frame}
+
+\begin{frame}[t]{Frame Title}{Frame Subtitle}
+This is the last slide
+\end{frame}
+
+\end{document}

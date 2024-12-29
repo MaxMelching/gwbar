@@ -241,24 +241,8 @@
     \end{tikzpicture}%
     % 
     % -- Account for some of the offset, while not pushing into the signal
-    % \vspace*{-0.5\gwbar@signalheight}%
-    % \vspace*{-\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle}%
-    % \vspace*{-\gwbar@frametitleheight}%
-    % \vspace*{\gwbar@frametitleheightnosubtitle}%
-    % \ifx\insertframesubtitle\@empty%
-    %     % \vspace*{-0.5\gwbar@signalheight}%
-    %     % \vspace*{-0.5\gwbar@signalheight + \baselineskip}%
-    %     % \vspace*{-0.5\gwbar@signalheight}%
-    %     % \vspace*{\baselineskip}%
-    %     % \vspace*{0.5em}%
-    %     \vspace*{-0.25\gwbar@signalheight}%
-    %     \else%
-    % % \vspace*{-\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle}%
-    %     % \vspace*{\baselineskip}%
-    %     % \vspace*{0.5em}%
-    % \fi%
     \ifx\insertframesubtitle\@empty%
-        \vspace*{0.5em}%
+        \vspace*{0.25\gwbar@signalheight}%
     \fi%
     % TODO: rethink if we should do this
 }

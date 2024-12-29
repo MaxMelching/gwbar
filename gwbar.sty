@@ -9,19 +9,19 @@
 \ProvidesPackage{gwbar}
 
 % -- Option definitions
-\newcommand{\template@name}{"generic_template.txt"}
+\newcommand{\gwbar@templatefilename}{"generic_template.txt"}
 
-\newlength{\leftpadding}  % Where signal starts, measured from left end of frame
-\setlength{\leftpadding}{0.6\textwidth}
+\newlength{\gwbar@leftpadding}  % Where signal starts, measured from left end of frame
+\setlength{\gwbar@leftpadding}{0.6\textwidth} % Some fiducial default values
 
-\newlength{\rightpadding}  % Where signal ends, measured from right end of frame
-\setlength{\rightpadding}{0.1\paperwidth} % Has to be fitted by hand
+\newlength{\gwbar@rightpadding}  % Where signal ends, measured from right end of frame
+\setlength{\gwbar@rightpadding}{0.1\paperwidth} % Some fiducial default value
 
 
 \RequirePackage{xkeyval}
-\DeclareOptionX{templatefile}{\renewcommand{\template@name}{#1}}
-\DeclareOptionX{leftpadding}{\setlength{\leftpadding}{#1}}
-\DeclareOptionX{rightpadding}{\setlength{\rightpadding}{#1}}
+\DeclareOptionX{templatefile}{\renewcommand{\gwbar@templatefilename}{#1}}
+\DeclareOptionX{leftpadding}{\setlength{\gwbar@leftpadding}{#1}}
+\DeclareOptionX{rightpadding}{\setlength{\gwbar@rightpadding}{#1}}
 \ProcessOptionsX
 
 
@@ -33,45 +33,45 @@
 \RequirePackage{beamerbasecompatibility}  % Standard for beamer packages
 
 
-% TODO: planned arguments are: leftpadding, rightpadding, signalheight, vspace at the bottom
+% TODO: planned arguments are: signalheight, vspace at the bottom. Maybe via boolean like \gwbar@fixedsignalheight
 
 
-% -- Note: credits for box measuring code to https://tex.stackexchange.com/questions/401377/adjust-logo-height-to-match-frametitle-box-height
+% -- Note: credits for box measuring code to
+% -- https://tex.stackexchange.com/questions/401377/adjust-logo-height-to-match-frametitle-box-height
 % -- (this is where all the "<- NEW" markers come from). The rest is mine.
 
-\makeatletter
 
 % -- Box lengths
-\newlength{\frametitleheight}% <- NEW
-\newlength{\frametitleheightnosubtitle}% <- NEW
+\newlength{\gwbar@frametitleheight}% <- NEW
+\newlength{\gwbar@frametitleheightnosubtitle}% <- NEW
 \newsavebox{\beamer@titlebox}% <- NEW
 \newsavebox{\beamer@titleboxnosubtitle}% <- NEW
 
 
 % -- More gwbar lengths
-\newlength{\signalheight}  % Set automatically in template (at the moment)
-\newlength{\signalwidth}  % Set automatically based on leftpadding, rightpadding
+\newlength{\gwbar@signalheight}  % Set automatically in template (at the moment)
+\newlength{\gwbar@signalwidth}  % Calculated based on leftpadding, rightpadding
 
-\newlength{\signalupshift}  % Amount by which signal is shifted up from where frametitle ends and subtitle begins
-% \setlength{\signalupshift}{0pt}
-\setlength{\signalupshift}{3pt}  % Fiducial value
+\newlength{\gwbar@signalupshift}  % Amount by which signal is shifted up from where frametitle ends and subtitle begins
+% \setlength{\gwbar@signalupshift}{0pt}
+\setlength{\gwbar@signalupshift}{3pt}  % Fiducial default value
 
-\newlength{\yshiftpicture}  % Set automatically in template
+\newlength{\gwbar@yshiftpicture}  % Set automatically in template
 
 
 
 \defbeamertemplate{frametitle}{gwbar}{%
-% -- Box measurements first
-% -- NOTE: not having blank lines is important for spacing reasons.
-% -- Always put a comment in.
+    % -- Box measurements first
+    % -- NOTE: not having blank lines is important for spacing reasons.
+    % -- Always put a comment in.
     \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
     \@tempdima=\textwidth%
     \advance\@tempdima by\beamer@leftmargin%
     \advance\@tempdima by\beamer@rightmargin%
-% 
-% 
+    % 
+    % 
     \sbox{\beamer@titleboxnosubtitle}{% <- NEW
-        \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}
+        \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}%
             \usebeamerfont{frametitle}%
             \vbox{}\vskip-1ex%
             \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
@@ -81,10 +81,10 @@
         \end{beamercolorbox}%
     }% <- NEW
     % \usebox{\beamer@titleboxnosubtitle}% <- NEW
-% 
-% 
+    % 
+    % 
     \sbox{\beamer@titlebox}{% <- NEW
-        \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}
+        \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}%
             \usebeamerfont{frametitle}%
             \vbox{}\vskip-1ex%
             \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
@@ -100,58 +100,58 @@
         \end{beamercolorbox}%
     }% <- NEW
     \usebox{\beamer@titlebox}% <- NEW
-
-    \settoheight{\frametitleheight}{\usebox{\beamer@titlebox}}% <- NEW
-    \addtolength{\frametitleheight}{\headheight}
-
-    \settoheight{\frametitleheightnosubtitle}{\usebox{\beamer@titleboxnosubtitle}}% <- NEW
-    \addtolength{\frametitleheightnosubtitle}{\headheight}
-% 
-% 
-    \setlength{\yshiftpicture}{-\frametitleheightnosubtitle}%
-% 
-    \setlength{\signalwidth}{\paperwidth-\leftpadding-\rightpadding}
-    % \setlength{\signalheight}{\frametitleheight-\frametitleheightnosubtitle+\signalupshift}
+    % 
+    \settoheight{\gwbar@frametitleheight}{\usebox{\beamer@titlebox}}% <- NEW
+    \addtolength{\gwbar@frametitleheight}{\headheight}%
+    % 
+    \settoheight{\gwbar@frametitleheightnosubtitle}{\usebox{\beamer@titleboxnosubtitle}}% <- NEW
+    \addtolength{\gwbar@frametitleheightnosubtitle}{\headheight}%
+    % 
+    % 
+    \setlength{\gwbar@yshiftpicture}{-\gwbar@frametitleheightnosubtitle}%
+    % 
+    \setlength{\gwbar@signalwidth}{\paperwidth-\gwbar@leftpadding - \gwbar@rightpadding}%
+    % \setlength{\gwbar@signalheight}{\gwbar@frametitleheight - \gwbar@frametitleheightnosubtitle + \gwbar@signalupshift}%
     % TODO: what to do if no subtitle?
-    \setlength{\signalheight}{\frametitleheightnosubtitle-\signalupshift-2pt}
-    % -\signalupshift to account for potential asymmetry.
+    \setlength{\gwbar@signalheight}{\gwbar@frametitleheightnosubtitle - \gwbar@signalupshift - 2pt}%
+    % -\gwbar@signalupshift to account for potential asymmetry.
     % -2pt for some space between top of file and signal end
-% 
-% 
+    % 
+    % 
     \begin{tikzpicture}[
         remember picture,
         overlay,
         line width=0.7pt,
-        shift={($(current page.north west)+(0pt,\yshiftpicture)$)},
+        shift={($(current page.north west)+(0pt,\gwbar@yshiftpicture)$)},
     ]
-    % -- NOTE: order in this picture matters for color and overlay etc
-    % -- (which is why we often have part one and two). Also, spaces don't
-    % -- matter in tikzpictures, at least no issues with that
+        % -- NOTE: order in this picture matters for color and overlay etc
+        % -- (which is why we often have part one and two). Also, spaces don't
+        % -- matter in tikzpictures, at least no issues with that
 
 
         % -- First part of filling. Important in case case where signalupshift is non-zero (and if no framesubtitle is set)
         \ifx\insertframesubtitle\@empty%
-            \ifdim\signalupshift=0pt
+            \ifdim\gwbar@signalupshift=0pt
             \else
                 \draw[
                     white,
                     fill,
-                    shift={(0, -\frametitleheight+\frametitleheightnosubtitle)},
-                ] (0, 0) rectangle (\paperwidth,\signalupshift);
+                    shift={(0, -\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle)},
+                ] (0, 0) rectangle (\paperwidth, \gwbar@signalupshift);
             \fi
         \fi
 
 
         % -- First layer of signal    
         \begin{scope}[
-            x=\signalwidth,
-            y=\signalheight,
+            x=\gwbar@signalwidth,
+            y=\gwbar@signalheight,
         ]
             \draw[
                 fg,
                 smooth,
-                shift={(\leftpadding,\signalupshift)},
-            ] plot file {\template@name};
+                shift={(\gwbar@leftpadding, \gwbar@signalupshift)},
+            ] plot file {\gwbar@templatefilename};
             % NOTE: signal is assumed ot have times in [0,1] and maximum amplitude of +1/-1
         \end{scope}
     
@@ -160,71 +160,96 @@
         \draw[
             fg,
             smooth,
-            shift={(0,\signalupshift)},
-        ] (0, 0) -- (\leftpadding, 0);
+            shift={(0, \gwbar@signalupshift)},
+        ] (0, 0) -- (\gwbar@leftpadding, 0);
         
         \draw[
             gray!50,
             opacity=0.42,
             smooth,
-            shift={(0,\signalupshift)},
-        ] (0, 0) -- (\leftpadding, 0);
+            shift={(0, \gwbar@signalupshift)},
+        ] (0, 0) -- (\gwbar@leftpadding, 0);
 
     
         % -- First layer of padding to right
         \draw[
             fg,
             smooth,
-            shift={(0,\signalupshift)},
-        ] ({\paperwidth - \rightpadding}, 0) -- (\paperwidth, 0);
+            shift={(0, \gwbar@signalupshift)},
+        ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
 
 
         % -- Second part of filling
         \draw[
             white,
             fill,
-            shift={(\leftpadding,0)},
-        ] ({(\paperwidth - \leftpadding) * \insertframenumber / \inserttotalframenumber}, -\signalheight) rectangle (\paperwidth-\leftpadding, 0);
+            shift={(\gwbar@leftpadding, 0)},
+        ] ({(\paperwidth - \gwbar@leftpadding) * \insertframenumber / \inserttotalframenumber}, -\gwbar@signalheight)
+        rectangle (\paperwidth - \gwbar@leftpadding, 0);
         % Hide part of signal for progress bar effect
         
         \draw[
             bg,
             fill,
-            shift={(\leftpadding,0)},
-        ] ({(\paperwidth - \leftpadding) * \insertframenumber / \inserttotalframenumber}, \frametitleheight) rectangle (\paperwidth-\leftpadding, -\frametitleheight+\frametitleheightnosubtitle);
+            shift={(\gwbar@leftpadding,0)},
+        ] ({(\paperwidth - \gwbar@leftpadding) * \insertframenumber / \inserttotalframenumber}, \gwbar@frametitleheight)
+        rectangle (\paperwidth - \gwbar@leftpadding, -\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle);
         % Refill titlebox
         
         \ifx\insertframesubtitle\@empty%
             \draw[
                 white,
                 fill,
-                shift={(\leftpadding, -\frametitleheight+\frametitleheightnosubtitle)},
-            ] ({(\paperwidth - \leftpadding) * \insertframenumber / \inserttotalframenumber}, 0pt) rectangle (\paperwidth-\leftpadding, \signalupshift);
+                shift={(\gwbar@leftpadding, -\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle)},
+            ] ({(\paperwidth - \gwbar@leftpadding) * \insertframenumber / \inserttotalframenumber}, 0pt)
+            rectangle (\paperwidth - \gwbar@leftpadding, \gwbar@signalupshift);
             % Paint over difference between titlebox and upshifted signal
         \fi
 
 
         % -- Second layer of signal. Shaded one that is hidden at current progress
         \begin{scope}[
-            x=\signalwidth,
-            y=\signalheight,
+            x=\gwbar@signalwidth,
+            y=\gwbar@signalheight,
         ]
             \draw[
                 gray!50,
                 opacity=0.42,
                 smooth,
-                shift={(\leftpadding,\signalupshift)},
-                ] plot file {\template@name};
+                shift={(\gwbar@leftpadding, \gwbar@signalupshift)},
+                ] plot file {\gwbar@templatefilename};
             % NOTE: signal is assumed ot have times in [0,1] and maximum amplitude of +1/-1
         \end{scope}
 
 
         % -- Second layer of padding to right
-        \draw[gray!50, opacity=0.42, smooth, shift={(0,\signalupshift)}] ({\paperwidth - \rightpadding}, 0) -- (\paperwidth, 0);
+        \draw[
+            gray!50,
+            opacity=0.42,
+            smooth,
+            shift={(0, \gwbar@signalupshift)},
+        ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
     \end{tikzpicture}%
     % 
-    % \vspace*{-0.3\signalheight}% Account for some of the offset, while not pushing into the signal
-    \vspace*{-\frametitleheight+\frametitleheightnosubtitle}%
+    % -- Account for some of the offset, while not pushing into the signal
+    % \vspace*{-0.5\gwbar@signalheight}%
+    % \vspace*{-\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle}%
+    % \vspace*{-\gwbar@frametitleheight}%
+    % \vspace*{\gwbar@frametitleheightnosubtitle}%
+    % \ifx\insertframesubtitle\@empty%
+    %     % \vspace*{-0.5\gwbar@signalheight}%
+    %     % \vspace*{-0.5\gwbar@signalheight + \baselineskip}%
+    %     % \vspace*{-0.5\gwbar@signalheight}%
+    %     % \vspace*{\baselineskip}%
+    %     % \vspace*{0.5em}%
+    %     \vspace*{-0.25\gwbar@signalheight}%
+    %     \else%
+    % % \vspace*{-\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle}%
+    %     % \vspace*{\baselineskip}%
+    %     % \vspace*{0.5em}%
+    % \fi%
+    \ifx\insertframesubtitle\@empty%
+        \vspace*{0.5em}%
+    \fi%
+    % TODO: rethink if we should do this
 }
-
-\makeatother

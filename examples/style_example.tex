@@ -9,20 +9,23 @@
 \usepackage[
     % templatefile="../generic_template.txt",
     templatefile="../eccentric_template.txt",
-    leftpadding=0.25\textwidth,  % Where signal begins from (distance from left border)
-    rightpadding=10pt,  % Where signal ends (distance from right border)
-    signalheight=1em,  % Hand-fitted to subtitle height
-	% signalupshift=-1em,  % To have signal on end of lower end of framesubtitle
-    % bottompaddingnosubtitle=10pt,  % Control where text starts, good if signal would overlap with it otherwise
-    % bottompaddingwithsubtitle=20pt,
 ]{../gwbar}
 \setbeamertemplate{frametitle}[gwbar]
 
 
-% -- Important: changing font sizes does not change alignment of things
-% -- (uncomment following lines to test yourself)
-% \setbeamerfont{frametitle}{size=\LARGE}
-% \setbeamerfont{framesubtitle}{size=\large}
+\tikzset{
+    gwbar@linelayerone/.style={
+        orange,
+        dashed,
+        line width=2pt,
+	},
+    gwbar@linelayertwo/.style={
+        blue,
+        opacity=0.2,
+		smooth,
+        line width=1pt,
+	},
+}
 
 
 

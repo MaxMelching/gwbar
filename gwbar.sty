@@ -95,6 +95,11 @@
 }
 
 
+\newlength{\gwbar@linelayerone@linewidth}
+\newlength{\gwbar@linelayertwo@linewidth}
+\newlength{\gwbar@linewidthshift}
+
+
 \defbeamertemplate{frametitle}{gwbar}{%
     % -- Box measurements first
     % -- NOTE: not having blank lines is important for spacing reasons.
@@ -213,12 +218,29 @@
             shift={(0, \gwbar@signalupshift)},
         ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
 
-        
+
+        % -- Get maximum linewidth of stuff, so that covering it works properly
+        % -- NOTE: setlength alone does not work because scope is local. To set
+        % -- globally, in a way compatible with the calc package, we need some extras.
+        % -- Cf. https://tex.stackexchange.com/questions/119730/global-scope-or-permanent-length-or-savebox
+        \begin{scope}[gwbar@linelayerone]
+            \setlength{\gwbar@linelayerone@linewidth}{\pgflinewidth}
+            \global\gwbar@linelayerone@linewidth=\gwbar@linelayerone@linewidth
+        \end{scope}
+        \begin{scope}[gwbar@linelayertwo]
+            \setlength{\gwbar@linelayertwo@linewidth}{\pgflinewidth}
+            \global\gwbar@linelayertwo@linewidth=\gwbar@linelayertwo@linewidth
+        \end{scope}
+        % NOTE: \pgfkeysifdefined would not work if value is thick, we need numerical value
+        \pgfmathsetmacro{\gwbar@maxlinewidth}{max(\gwbar@linelayerone@linewidth, \gwbar@linelayertwo@linewidth)}
+        \setlength{\gwbar@linewidthshift}{\gwbar@maxlinewidth pt + \gwbar@maxlinewidth pt}  % Take double as safety bed
+
+
         % -- Second part of filling
         \draw[
             gwbar@fillinglayerone,
             shift={(\gwbar@leftpadding, 0)},
-        ] ({(\paperwidth - \gwbar@leftpadding) * \insertframenumber / \inserttotalframenumber}, -\gwbar@signalheight + \gwbar@signalupshift - 2pt)
+        ] ({(\paperwidth - \gwbar@leftpadding) * \insertframenumber / \inserttotalframenumber}, -\gwbar@signalheight + \gwbar@signalupshift - \gwbar@linewidthshift)
         rectangle (\paperwidth - \gwbar@leftpadding, 0);
         % Hide part of signal for progress bar effect
         

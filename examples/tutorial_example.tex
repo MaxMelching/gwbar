@@ -9,8 +9,10 @@
 \usepackage[
     % templatefile="../generic_template.txt",
     templatefile="../eccentric_template.txt",
-    signalupshift=-1em,
+    signalupshift=-1.2em,
     signalheight=2em,
+    bottompaddingwithsubtitle=0.2em,
+    bottompaddingnosubtitle=0.4em,
 ]{../gwbar}
 \setbeamertemplate{frametitle}[gwbar]
 
@@ -38,6 +40,10 @@
 		pattern color=blue,
 	},
 }
+
+% -- To see the impact of bottompadding parameters, add a colored line to the
+% -- end of the template.
+\addtobeamertemplate{frametitle}{}{\par{\color{purple}\rule{\textwidth}{1.5pt}}}
 
 
 

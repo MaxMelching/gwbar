@@ -44,6 +44,7 @@
 \ProcessOptionsX
 
 
+% -- Dependencies
 \RequirePackage{calc}  % For length calculations
 
 \RequirePackage{tikz}
@@ -57,13 +58,13 @@
 % -- (this is where all the "<- NEW" markers come from). The rest is mine.
 
 
-% -- Box lengths
-\newlength{\gwbar@frametitleheight}% <- NEW
-\newlength{\gwbar@frametitleheightnosubtitle}% <- NEW
+% -- Boxes and box lengths
 \newsavebox{\beamer@titlebox}% <- NEW
+\newlength{\gwbar@frametitleheight}% <- NEW
 \newsavebox{\beamer@titleboxnosubtitle}% <- NEW
-\newlength{\gwbar@subtitleboxheight}
+\newlength{\gwbar@frametitleheightnosubtitle}% <- NEW
 \newsavebox{\gwbar@subtitlebox}
+\newlength{\gwbar@subtitleboxheight}
 
 
 % -- More gwbar lengths
@@ -100,6 +101,7 @@
 \newlength{\gwbar@linelayerone@linewidth}
 \newlength{\gwbar@linelayertwo@linewidth}
 \newlength{\gwbar@linewidthshift}
+
 
 
 \defbeamertemplate{frametitle}{gwbar}{%
@@ -153,60 +155,36 @@
     % 
     \setlength{\gwbar@signalwidth}{\paperwidth - \gwbar@leftpadding - \gwbar@rightpadding}%
     \ifthenelse{\equal{\gwbar@signalheight@given}{"frametitleheight"}}{%
-        \setlength{\gwbar@signalheight}{\gwbar@frametitleheightnosubtitle - \gwbar@signalupshift - 2pt}%
+        \setlength{\gwbar@signalheight}{\gwbar@frametitleheightnosubtitle - \gwbar@signalupshift}%
         % -- -\gwbar@signalupshift to account for potential asymmetry.
-        % -- -2pt for some space between top of file and signal end
     }{%
         \ifthenelse{\equal{\gwbar@signalheight@given}{"framesubtitleheight"}}{%
             \ifx\insertframesubtitle\@empty%
-                % -- Do nothing, i.e. rely on length being defined previously -> not good, length is not stored globally, need to calculate on every frame
-                % \framesubtitle{Test}%
-                % % \renewcommand{\framesubtitle}{Test}%
-                % \usebox{\beamer@titlebox}% <- NEW
-                % % 
-                % \settoheight{\gwbar@frametitleheight}{\usebox{\beamer@titlebox}}% <- NEW
-                % \addtolength{\gwbar@frametitleheight}{\headheight}%
-                % % 
-                % \settoheight{\gwbar@frametitleheightnosubtitle}{\usebox{\beamer@titleboxnosubtitle}}% <- NEW
-                % \addtolength{\gwbar@frametitleheightnosubtitle}{\headheight}%
-                % % 
-                % \setlength{\gwbar@signalheight}{\gwbar@frametitleheight - \gwbar@frametitleheightnosubtitle + \gwbar@signalupshift}%
-                % 
-                % \framesubtitle{Frame Subtitle}%
-                % \settoheight{\gwbar@signalheight}{{\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}}%
-                % \settoheight{\gwbar@signalheight}{{\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}Test\strut\par}}%
-                % \settoheight{\gwbar@signalheight}{\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}Test\strut\par}%
-                \sbox{\gwbar@subtitlebox}{
-                    % \begin{beamercolorbox}%[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}%
-                        % {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
-                        % {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}Test\strut\par}%
-                    % \end{beamercolorbox}%
+                % -- Problem: setting and unsetting the framesubtitle and reading
+                % -- out the height of \beamer@titlebox in between does not work.
+                % -- Thus we have to redefine a new box with a placeholder at
+                % -- framesubtitle and this is what \gwbar@subtitlebox is for.
+                \sbox{\gwbar@subtitlebox}{%
                     \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}%
                         \usebeamerfont{frametitle}%
                         \vbox{}\vskip-1ex%
                         \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
                         \strut\insertframetitle\strut\par%
                         {%
-                        % \ifx\insertframesubtitle\@empty%
-                        % \else%
-                        % {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
-                        % \fi
                         {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}Frame Subtitle\strut\par}%
                         }%
                         \vskip-1ex%
                         \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
                     \end{beamercolorbox}%
                 }%
+                % 
                 \settoheight{\gwbar@subtitleboxheight}{\usebox{\gwbar@subtitlebox}}%
                 \addtolength{\gwbar@subtitleboxheight}{\headheight}%
-                % \framesubtitle{Frame Subtitle}%
-                % \settoheight{\gwbar@subtitleboxheight}{\usebox{\beamer@titlebox}}%
-                % \addtolength{\gwbar@subtitleboxheight}{\headheight}%
-                % \framesubtitle{}%
-                \setlength{\gwbar@signalheight}{\gwbar@subtitleboxheight - \gwbar@frametitleheightnosubtitle + \gwbar@signalupshift}%
             \else%
-                \setlength{\gwbar@signalheight}{\gwbar@frametitleheight - \gwbar@frametitleheightnosubtitle + \gwbar@signalupshift}%
+                \setlength{\gwbar@subtitleboxheight}{\gwbar@frametitleheight}%
             \fi%
+                % 
+                \setlength{\gwbar@signalheight}{\gwbar@subtitleboxheight - \gwbar@frametitleheightnosubtitle + \gwbar@signalupshift}%
         }{%
             % -- Numerical input has been given
             \setlength{\gwbar@signalheight}{\gwbar@signalheight@given}%
@@ -221,54 +199,10 @@
     ]
         % -- NOTE: order in this picture matters for color and overlay etc
         % -- (which is why we often have part one and two). Also, spaces don't
-        % -- matter in tikzpictures, at least no issues with that
+        % -- matter in tikzpictures, so at least no issues with that.
 
 
-        % -- First part of filling. Important in case where signalupshift is non-zero (and if no framesubtitle is set)
-        \ifx\insertframesubtitle\@empty%
-            \ifdim\gwbar@signalupshift=0pt
-            \else
-                \draw[
-                    gwbar@fillinglayerone,
-                    shift={(0, -\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle)},
-                ] (0, 0) rectangle (\paperwidth, \gwbar@signalupshift);
-            \fi
-        \fi
-
-
-        % -- First layer of signal    
-        \begin{scope}[
-            x=\gwbar@signalwidth,
-            y=\gwbar@signalheight,
-        ]
-            \draw[
-                gwbar@linelayerone,
-                shift={(\gwbar@leftpadding, \gwbar@signalupshift)},
-            ] plot file {\gwbar@templatefilename};
-            % NOTE: signal is assumed ot have times in [0,1] and maximum amplitude of +1/-1
-        \end{scope}
-    
-        
-        % -- First layer of padding to left
-        \draw[
-            gwbar@linelayerone,
-            shift={(0, \gwbar@signalupshift)},
-        ] (0, 0) -- (\gwbar@leftpadding, 0);
-        
-        \draw[
-            gwbar@linelayertwo,
-            shift={(0, \gwbar@signalupshift)},
-        ] (0, 0) -- (\gwbar@leftpadding, 0);
-
-    
-        % -- First layer of padding to right
-        \draw[
-            gwbar@linelayerone,
-            shift={(0, \gwbar@signalupshift)},
-        ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
-
-
-        % -- Get maximum linewidth of stuff, so that covering it works properly
+        % -- Get maximum linewidth of stuff, so that covering works properly.
         % -- NOTE: setlength alone does not work because scope is local. To set
         % -- globally, in a way compatible with the calc package, we need some extras.
         % -- Cf. https://tex.stackexchange.com/questions/119730/global-scope-or-permanent-length-or-savebox
@@ -285,32 +219,89 @@
         \setlength{\gwbar@linewidthshift}{\gwbar@maxlinewidth pt + \gwbar@maxlinewidth pt}  % Take double as safety bed
 
 
-        % -- Second part of filling
+        % -- Account for linewidth in fitting of heights
+        \ifthenelse{\equal{\gwbar@signalheight@given}{"frametitleheight"}}{
+            \addtolength{\gwbar@signalheight}{-\gwbar@maxlinewidth pt}
+            % \addtolength{\gwbar@signalheight}{-\gwbar@linewidthshift}
+        }{
+            \ifthenelse{\equal{\gwbar@signalheight@given}{"framesubtitleheight"}}{
+                \addtolength{\gwbar@signalheight}{-\gwbar@maxlinewidth pt}
+                % \addtolength{\gwbar@signalheight}{-\gwbar@linewidthshift}
+            }{
+                % -- If custom signalheight is given, we don't mess with that
+            }
+        }
+
+
+        % -- First Layer ------------------------------------------------------
+        \ifx\insertframesubtitle\@empty%
+            % -- Important in case where signalupshift is non-zero (and if no framesubtitle is set)
+            \ifdim\gwbar@signalupshift=0pt
+            \else
+                \draw[
+                    gwbar@fillinglayerone,
+                    shift={(0, -\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle)},
+                ] (0, 0) rectangle (\paperwidth, \gwbar@signalupshift);
+            \fi
+        \fi
+
+
+        % -- Plot part of signal that is visible for current progress
+        \begin{scope}[
+            x=\gwbar@signalwidth,
+            y=\gwbar@signalheight,
+        ]
+            \draw[
+                gwbar@linelayerone,
+                shift={(\gwbar@leftpadding, \gwbar@signalupshift)},
+            ] plot file {\gwbar@templatefilename};
+            % NOTE: signal is assumed ot have times in [0,1] and maximum amplitude of +1/-1
+        \end{scope}
+
+        \draw[
+            gwbar@linelayerone,
+            shift={(0, \gwbar@signalupshift)},
+        ] (0, 0) -- (\gwbar@leftpadding, 0);
+
+
+        \draw[
+            gwbar@linelayerone,
+            shift={(0, \gwbar@signalupshift)},
+        ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
+
+
+        % -- Second Layer -----------------------------------------------------
+        \draw[
+            gwbar@linelayertwo,
+            shift={(0, \gwbar@signalupshift)},
+            ] (0, 0) -- (\gwbar@leftpadding, 0);
+
+        % -- Hide part of signal for progress bar effect
         \draw[
             gwbar@fillinglayerone,
             shift={(\gwbar@leftpadding, 0)},
         ] ({(\paperwidth - \gwbar@leftpadding) * \insertframenumber / \inserttotalframenumber}, -\gwbar@signalheight + \gwbar@signalupshift - \gwbar@linewidthshift)
         rectangle (\paperwidth - \gwbar@leftpadding, 0);
-        % Hide part of signal for progress bar effect
-        
+
+        % -- Refill titlebox
         \draw[
             gwbar@fillinglayertwo,
             shift={(\gwbar@leftpadding, 0)},
         ] ({(\paperwidth - \gwbar@leftpadding) * \insertframenumber / \inserttotalframenumber}, \gwbar@frametitleheight)
         rectangle (\paperwidth - \gwbar@leftpadding, -\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle);
-        % Refill titlebox
-        
+
+
         \ifx\insertframesubtitle\@empty%
+            % -- Paint over difference between titlebox and upshifted signal
             \draw[
                 gwbar@fillinglayerone,
                 shift={(\gwbar@leftpadding, -\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle)},
             ] ({(\paperwidth - \gwbar@leftpadding) * \insertframenumber / \inserttotalframenumber}, 0pt)
             rectangle (\paperwidth - \gwbar@leftpadding, \gwbar@signalupshift);
-            % Paint over difference between titlebox and upshifted signal
         \fi
 
 
-        % -- Second layer of signal. Shaded one that is hidden at current progress
+        % -- Hide part of signal + right padding to get progress bar effect
         \begin{scope}[
             x=\gwbar@signalwidth,
             y=\gwbar@signalheight,
@@ -322,8 +313,6 @@
             % NOTE: signal is assumed ot have times in [0,1] and maximum amplitude of +1/-1
         \end{scope}
 
-
-        % -- Second layer of padding to right
         \draw[
             gwbar@linelayertwo,
             shift={(0, \gwbar@signalupshift)},

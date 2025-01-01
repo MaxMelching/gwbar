@@ -1,0 +1,44 @@
+\documentclass{beamer}
+\usecolortheme{spruce}
+
+\usepackage{heuristica} % Just for cosmetic purposes
+
+
+% -- Since .sty and .txt are not in same directory, we have to give the
+% -- templatefile argument and use ../gwbar
+\newlength{\customheight}
+\usepackage[
+    templatefile="../generic_template.txt",
+    % -- In the following we explore many different types of signalheight input
+    % signalheight="frametitleheight",
+    % signalheight="framesubtitleheight",
+    % signalheight=1em,
+    signalheight=\customheight,
+]{../gwbar}
+\setbeamertemplate{frametitle}[gwbar]
+
+
+
+\begin{document}
+
+\setlength{\customheight}{1em}  % Only relevant for signalheight=\customheight
+\begin{frame}[t]{Frame Title}
+This is the first slide
+\end{frame}
+
+\setlength{\customheight}{2em}  % Only relevant for signalheight=\customheight
+\begin{frame}[t]{Frame Title}{Frame Subtitle}
+Slide number 2
+\end{frame}
+
+\setlength{\customheight}{3em}  % Only relevant for signalheight=\customheight
+\begin{frame}[t]{Frame Title}
+Another slide
+\end{frame}
+
+\setlength{\customheight}{0em}  % Only relevant for signalheight=\customheight
+\begin{frame}[t]{Frame Title}{Frame Subtitle}
+This is the last slide
+\end{frame}
+
+\end{document}

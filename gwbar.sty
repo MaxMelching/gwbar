@@ -144,7 +144,7 @@
             \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
         \end{beamercolorbox}%
     }% <- NEW
-    % \usebox{\beamer@titlebox}% <- NEW
+    \usebox{\beamer@titlebox}% <- NEW
     % 
     \settoheight{\gwbar@frametitleheight}{\usebox{\beamer@titlebox}}% <- NEW
     \addtolength{\gwbar@frametitleheight}{\headheight}%
@@ -321,7 +321,6 @@
         ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
     \end{tikzpicture}%
     % 
-    \usebox{\beamer@titlebox}% <- NEW
     % -- Account for some of the offset, while not pushing into the signal
     % \vspace*{-\gwbar@signalupshift}% TODO: decide whether this helps
     \ifx\insertframesubtitle\@empty%

@@ -1,17 +1,13 @@
+# -- Latex extensions
 *.aux
-
 *.log
-
 *.synctex.gz
-
 *.fls
-
 *.fdb_latexmk
-
 *.nav
-
 *.out
-
 *.snm
-
 *.toc
+
+# -- Python cludder
+__pycache__

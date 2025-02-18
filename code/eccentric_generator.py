@@ -4,6 +4,9 @@ import numpy as np
 from gwpy.timeseries import TimeSeries
 from scipy.signal import windows
 
+from os.path import join, dirname
+FILE_DIR = dirname(__file__)
+
 
 # gen = gwsignal_get_waveform_generator('SEOBNRv4EHM')
 # gen = gwsignal_get_waveform_generator('NR_hdf5')
@@ -45,4 +48,4 @@ plt.show()
 
 
 from gw_generator import signal_export
-signal_export(nr_series_tapered, 'eccentric_template.txt')
+signal_export(nr_series_tapered, join(FILE_DIR, 'eccentric_template.txt'))

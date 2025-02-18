@@ -3,10 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from gwpy.timeseries import TimeSeries
 
-# from gw_generator import signal_export
-
-def signal_export(*args, **kwargs):
-    return None
+from gw_generator import signal_export
 
 from os.path import join, dirname
 FILE_DIR = dirname(__file__)

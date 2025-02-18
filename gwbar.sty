@@ -91,18 +91,14 @@
         line width=0.7pt,
 	},
     gwbar@linelayertwo/.style={
-        gray!50,
+        gray!50!bg,
         opacity=0.42,
 		smooth,
         line width=0.7pt,
 	},
-    gwbar@fillinglayerone/.style={
+    gwbar@fillinglayer/.style={
         fill,
         white,  % Default color of frame background canvas
-	},
-    gwbar@fillinglayertwo/.style={
-        fill,
-        bg,
 	},
 }
 
@@ -242,94 +238,87 @@
         }
 
 
-        % -- First Layer ------------------------------------------------------
         \ifx\insertframesubtitle\@empty%
             % -- Important in case where signalupshift is non-zero (and if no framesubtitle is set)
             \ifdim\gwbar@signalupshift=0pt
             \else
                 \draw[
-                    gwbar@fillinglayerone,
+                    gwbar@fillinglayer,
                     shift={(0, -\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle)},
                 ] (0, 0) rectangle (\paperwidth, \gwbar@signalupshift);
             \fi
         \fi
 
 
+
+        % -- Order matters, first one is supposed to serve as background
+        % -- signal (if a background signal is given).
+        \begin{scope}[
+            gwbar@linelayertwo,
+            shift={(0pt, \gwbar@signalupshift)},
+        ]
+            \begin{scope}[
+                x=\gwbar@signalwidth,%+\gwbar@rightpadding,
+                y=\gwbar@signalheight,
+                shift={(\gwbar@leftpadding, 0pt)},  % Shifting here is important for clipping to work
+            ]
+                \ifthenelse{\equal{\gwbar@backgroundtemplatefilename}{"none"}}{
+                    \clip ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, -1) rectangle ({\gwbar@signalwidth + \gwbar@rightpadding}, 1);
+                    
+                    \draw[
+                % shift={(\gwbar@leftpadding, 0pt)},
+                    ] plot file {\gwbar@templatefilename};
+                }{
+                    \draw[
+                % shift={(\gwbar@leftpadding, 0pt)},
+                    ] plot file {\gwbar@backgroundtemplatefilename};
+                }
+            
+            \draw[
+                shift={(-\gwbar@leftpadding, 0pt)},
+            ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
+            \end{scope}
+
+            % \draw[
+            %     % shift={(\gwbar@leftpadding+\gwbar@signalwidth, 0pt)},
+            % ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
+        \end{scope}
+        
         % -- Plot part of signal that is visible for current progress
         \begin{scope}[
-            x=\gwbar@signalwidth,
-            y=\gwbar@signalheight,
+            gwbar@linelayerone,
+            shift={(0pt, \gwbar@signalupshift)},
         ]
             \draw[
-                gwbar@linelayerone,
-                shift={(\gwbar@leftpadding, \gwbar@signalupshift)},
-            ] plot file {\gwbar@templatefilename};
-            % NOTE: signal is assumed ot have times in [0,1] and maximum amplitude of +1/-1
-        \end{scope}
-
-        \draw[
-            gwbar@linelayerone,
-            shift={(0, \gwbar@signalupshift)},
-        ] (0, 0) -- (\gwbar@leftpadding, 0);
-
-
-        \draw[
-            gwbar@linelayerone,
-            shift={(0, \gwbar@signalupshift)},
-        ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
-
-
-        % -- Second Layer -----------------------------------------------------
-        \draw[
-            gwbar@linelayertwo,
-            shift={(0, \gwbar@signalupshift)},
             ] (0, 0) -- (\gwbar@leftpadding, 0);
-
-        % -- Hide part of signal for progress bar effect
-        \draw[
-            gwbar@fillinglayerone,
-            shift={(\gwbar@leftpadding, 0)},
-        ] ({(\paperwidth - \gwbar@leftpadding) * \insertframenumber / \inserttotalframenumber}, -\gwbar@signalheight + \gwbar@signalupshift - \gwbar@linewidthshift)
-        rectangle (\paperwidth - \gwbar@leftpadding, 0);
-
-        % -- Refill titlebox
-        \draw[
-            gwbar@fillinglayertwo,
-            shift={(\gwbar@leftpadding, 0)},
-        ] ({(\paperwidth - \gwbar@leftpadding) * \insertframenumber / \inserttotalframenumber}, \gwbar@frametitleheight)
-        rectangle (\paperwidth - \gwbar@leftpadding, -\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle);
-
-
-        \ifx\insertframesubtitle\@empty%
-            % -- Paint over difference between titlebox and upshifted signal
-            \draw[
-                gwbar@fillinglayerone,
-                shift={(\gwbar@leftpadding, -\gwbar@frametitleheight + \gwbar@frametitleheightnosubtitle)},
-            ] ({(\paperwidth - \gwbar@leftpadding) * \insertframenumber / \inserttotalframenumber}, 0pt)
-            rectangle (\paperwidth - \gwbar@leftpadding, \gwbar@signalupshift);
-        \fi
-
-
-        % -- Hide part of signal + right padding to get progress bar effect
-        \begin{scope}[
-            x=\gwbar@signalwidth,
-            y=\gwbar@signalheight,
-        ]
-            \draw[
-                gwbar@linelayertwo,
-                shift={(\gwbar@leftpadding, \gwbar@signalupshift)},
+            
+            \begin{scope}[
+                x=\gwbar@signalwidth,%+\gwbar@rightpadding,
+                y=\gwbar@signalheight,
+                shift={(\gwbar@leftpadding, 0pt)},  % Shifting here is important for clipping to work
+            ]
+                \clip[
+                % shift={(\gwbar@leftpadding, 0pt)},
+                % ](0, -1) rectangle ({(\paperwidth - \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 1);
+                ](0, -1) rectangle ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 1);
+                
+                \draw[
+                % shift={(\gwbar@leftpadding, 0pt)},
                 ] plot file {\gwbar@templatefilename};
-            % NOTE: signal is assumed ot have times in [0,1] and maximum amplitude of +1/-1
-        \end{scope}
+            
+            \draw[
+                shift={(-\gwbar@leftpadding, 0pt)},
+            ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
+            \end{scope}
 
-        \draw[
-            gwbar@linelayertwo,
-            shift={(0, \gwbar@signalupshift)},
-        ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
+            % \draw[
+            %     % shift={(\gwbar@leftpadding+\gwbar@signalwidth, 0pt)},
+            % ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
+        \end{scope}
     \end{tikzpicture}%
     % 
     % -- Account for some of the offset, while not pushing into the signal
-    % \vspace*{-\gwbar@signalupshift}% TODO: decide whether this helps
+    \vspace*{-\gwbar@signalupshift}% TODO: decide whether this helps
     \ifx\insertframesubtitle\@empty%
         \vspace*{0.25\gwbar@signalheight}%
         \vspace*{\gwbar@bottompadding@nosubtitle}%

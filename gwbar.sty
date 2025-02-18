@@ -18,15 +18,13 @@
 \newlength{\gwbar@rightpadding}  % Where signal ends, measured from right end of frame
 \setlength{\gwbar@rightpadding}{0.1\paperwidth} % Some fiducial default value
 
-% \newcommand{\gwbar@signalheight@given}{}
 \newcommand{\gwbar@signalheight@given}{"frametitleheight"}
 % -- Not a length for convenient comparisons, despite being slightly less robust
 % -- because it can now be any value. We choose some default that does not make
 % -- sense here for comparisons later in code.
 
 \newlength{\gwbar@signalupshift}  % Amount by which signal is shifted up from where frametitle ends and subtitle begins
-% \setlength{\gwbar@signalupshift}{0pt}
-\setlength{\gwbar@signalupshift}{3pt}  % Fiducial default value
+\setlength{\gwbar@signalupshift}{3pt}  % Fiducial default value, is nice for some separation between line and framesubtitle
 
 \newlength{\gwbar@bottompadding@nosubtitle}
 \setlength{\gwbar@bottompadding@nosubtitle}{0pt}
@@ -106,6 +104,7 @@
 \newlength{\gwbar@linelayerone@linewidth}
 \newlength{\gwbar@linelayertwo@linewidth}
 \newlength{\gwbar@linewidthshift}
+% TODO: potentially remove them too
 
 
 
@@ -211,31 +210,32 @@
         % -- NOTE: setlength alone does not work because scope is local. To set
         % -- globally, in a way compatible with the calc package, we need some extras.
         % -- Cf. https://tex.stackexchange.com/questions/119730/global-scope-or-permanent-length-or-savebox
-        \begin{scope}[gwbar@linelayerone]
-            \setlength{\gwbar@linelayerone@linewidth}{\pgflinewidth}
-            \global\gwbar@linelayerone@linewidth=\gwbar@linelayerone@linewidth
-        \end{scope}
-        \begin{scope}[gwbar@linelayertwo]
-            \setlength{\gwbar@linelayertwo@linewidth}{\pgflinewidth}
-            \global\gwbar@linelayertwo@linewidth=\gwbar@linelayertwo@linewidth
-        \end{scope}
-        % NOTE: \pgfkeysifdefined would not work if value is thick, we need numerical value
-        \pgfmathsetmacro{\gwbar@maxlinewidth}{max(\gwbar@linelayerone@linewidth, \gwbar@linelayertwo@linewidth)}
-        \setlength{\gwbar@linewidthshift}{\gwbar@maxlinewidth pt + \gwbar@maxlinewidth pt}  % Take double as safety bed
+        % \begin{scope}[gwbar@linelayerone]
+        %     \setlength{\gwbar@linelayerone@linewidth}{\pgflinewidth}
+        %     \global\gwbar@linelayerone@linewidth=\gwbar@linelayerone@linewidth
+        % \end{scope}
+        % \begin{scope}[gwbar@linelayertwo]
+        %     \setlength{\gwbar@linelayertwo@linewidth}{\pgflinewidth}
+        %     \global\gwbar@linelayertwo@linewidth=\gwbar@linelayertwo@linewidth
+        % \end{scope}
+        % % NOTE: \pgfkeysifdefined would not work if value is thick, we need numerical value
+        % \pgfmathsetmacro{\gwbar@maxlinewidth}{max(\gwbar@linelayerone@linewidth, \gwbar@linelayertwo@linewidth)}
+        % \setlength{\gwbar@linewidthshift}{\gwbar@maxlinewidth pt + \gwbar@maxlinewidth pt}  % Take double as safety bed
 
 
-        % -- Account for linewidth in fitting of heights
-        \ifthenelse{\equal{\gwbar@signalheight@given}{"frametitleheight"}}{
-            \addtolength{\gwbar@signalheight}{-\gwbar@maxlinewidth pt}
-            % \addtolength{\gwbar@signalheight}{-\gwbar@linewidthshift}
-        }{
-            \ifthenelse{\equal{\gwbar@signalheight@given}{"framesubtitleheight"}}{
-                \addtolength{\gwbar@signalheight}{-\gwbar@maxlinewidth pt}
-                % \addtolength{\gwbar@signalheight}{-\gwbar@linewidthshift}
-            }{
-                % -- If custom signalheight is given, we don't mess with that
-            }
-        }
+        % % -- Account for linewidth in fitting of heights
+        % \ifthenelse{\equal{\gwbar@signalheight@given}{"frametitleheight"}}{
+        %     \addtolength{\gwbar@signalheight}{-\gwbar@maxlinewidth pt}
+        %     % \addtolength{\gwbar@signalheight}{-\gwbar@linewidthshift}
+        % }{
+        %     \ifthenelse{\equal{\gwbar@signalheight@given}{"framesubtitleheight"}}{
+        %         \addtolength{\gwbar@signalheight}{-\gwbar@maxlinewidth pt}
+        %         % \addtolength{\gwbar@signalheight}{-\gwbar@linewidthshift}
+        %     }{
+        %         % -- If custom signalheight is given, we don't mess with that
+        %     }
+        % }
+        % TODO: is this still required? I mean we clip, might look strange if we do not account for it...
 
 
         \ifx\insertframesubtitle\@empty%
@@ -250,38 +250,27 @@
         \fi
 
 
-
         % -- Order matters, first one is supposed to serve as background
         % -- signal (if a background signal is given).
         \begin{scope}[
             gwbar@linelayertwo,
-            shift={(0pt, \gwbar@signalupshift)},
+            x=\gwbar@signalwidth,
+            y=\gwbar@signalheight,
+            shift={(\gwbar@leftpadding, \gwbar@signalupshift)},  % Shifting here is important for clipping to work
         ]
-            \begin{scope}[
-                x=\gwbar@signalwidth,%+\gwbar@rightpadding,
-                y=\gwbar@signalheight,
-                shift={(\gwbar@leftpadding, 0pt)},  % Shifting here is important for clipping to work
-            ]
-                \ifthenelse{\equal{\gwbar@backgroundtemplatefilename}{"none"}}{
-                    \clip ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, -1) rectangle ({\gwbar@signalwidth + \gwbar@rightpadding}, 1);
-                    
-                    \draw[
-                % shift={(\gwbar@leftpadding, 0pt)},
-                    ] plot file {\gwbar@templatefilename};
-                }{
-                    \draw[
-                % shift={(\gwbar@leftpadding, 0pt)},
-                    ] plot file {\gwbar@backgroundtemplatefilename};
-                }
-            
+            \ifthenelse{\equal{\gwbar@backgroundtemplatefilename}{"none"}}{
+                \clip ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, -1) rectangle ({\gwbar@signalwidth + \gwbar@rightpadding}, 1);
+                
+                \draw[
+                ] plot file {\gwbar@templatefilename};
+            }{
+                \draw[
+                ] plot file {\gwbar@backgroundtemplatefilename};
+            }
+        
             \draw[
                 shift={(-\gwbar@leftpadding, 0pt)},
             ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
-            \end{scope}
-
-            % \draw[
-            %     % shift={(\gwbar@leftpadding+\gwbar@signalwidth, 0pt)},
-            % ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
         \end{scope}
         
         % -- Plot part of signal that is visible for current progress
@@ -297,23 +286,15 @@
                 y=\gwbar@signalheight,
                 shift={(\gwbar@leftpadding, 0pt)},  % Shifting here is important for clipping to work
             ]
-                \clip[
-                % shift={(\gwbar@leftpadding, 0pt)},
-                % ](0, -1) rectangle ({(\paperwidth - \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 1);
-                ](0, -1) rectangle ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 1);
+                \clip (0, -1) rectangle ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 1);
                 
                 \draw[
-                % shift={(\gwbar@leftpadding, 0pt)},
                 ] plot file {\gwbar@templatefilename};
             
             \draw[
                 shift={(-\gwbar@leftpadding, 0pt)},
             ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
             \end{scope}
-
-            % \draw[
-            %     % shift={(\gwbar@leftpadding+\gwbar@signalwidth, 0pt)},
-            % ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
         \end{scope}
     \end{tikzpicture}%
     % 
@@ -338,51 +319,38 @@
 
 \ifthenelse{\equal{\gwbar@declaretitlebox}{true}}{}{%
     \setlength{\gwbar@signalheight}{\gwbar@signalheight@given}
-    % \setlength{\gwbar@signalheight}{1em}
-    \setlength{\gwbar@signalwidth}{\paperwidth - \gwbar@leftpadding - \gwbar@rightpadding}%
+    \setlength{\gwbar@signalwidth}{\paperwidth - \gwbar@leftpadding - \gwbar@rightpadding}
     \setlength{\gwbar@yshiftpicture}{\gwbar@signalupshift}
-    % 
-    % 
-    % \addtobeamertemplate{frametitle}{}{%
+    % -- Could just use signalupshift in options below, but I can see
+    % -- already how this leads to issues when I do copy+paste.
+
     \defbeamertemplate{headline}{gwbar}{%
-        % \usebeamertemplate*{simplergwbar}
-        % \simplergwbar
-        % \usebeamertemplate*{frametitle}[gwbar]
-        % 
         \begin{tikzpicture}[
             remember picture,
             overlay,
             shift={($(current page.north west)+(0pt,\gwbar@yshiftpicture)$)},
         ]
-            % -- Order matters, first one is supposed to serve as background signal
+            % -- Order matters, first one is supposed to serve as
+            % -- background signal (if a background signal is given).
             \begin{scope}[
                 gwbar@linelayertwo,
-            ]   
-                \begin{scope}[
-                    x=\gwbar@signalwidth,%+\gwbar@rightpadding,
-                    y=\gwbar@signalheight,
-                    shift={(\gwbar@leftpadding, 0pt)},  % Shifting here is important for clipping to work
-                ]
-                    \ifthenelse{\equal{\gwbar@backgroundtemplatefilename}{"none"}}{
-                        \clip ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, -1) rectangle ({\gwbar@signalwidth + \gwbar@rightpadding}, 1);
-                        
-                        \draw[
-                    % shift={(\gwbar@leftpadding, 0pt)},
-                        ] plot file {\gwbar@templatefilename};
-                    }{
-                        \draw[
-                    % shift={(\gwbar@leftpadding, 0pt)},
-                        ] plot file {\gwbar@backgroundtemplatefilename};
-                    }
-                
+                x=\gwbar@signalwidth,
+                y=\gwbar@signalheight,
+                shift={(\gwbar@leftpadding, 0pt)},  % Shifting here is important for clipping to work
+            ]
+                \ifthenelse{\equal{\gwbar@backgroundtemplatefilename}{"none"}}{
+                    \clip ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, -1) rectangle ({\gwbar@signalwidth + \gwbar@rightpadding}, 1);
+                    
+                    \draw[
+                    ] plot file {\gwbar@templatefilename};
+                }{
+                    \draw[
+                    ] plot file {\gwbar@backgroundtemplatefilename};
+                }
+            
                 \draw[
                     shift={(-\gwbar@leftpadding, 0pt)},
                 ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
-                \end{scope}
-
-                % \draw[
-                %     % shift={(\gwbar@leftpadding+\gwbar@signalwidth, 0pt)},
-                % ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
             \end{scope}
             
             \begin{scope}[
@@ -392,27 +360,19 @@
                 ] (0, 0) -- (\gwbar@leftpadding, 0);
                 
                 \begin{scope}[
-                    x=\gwbar@signalwidth,%+\gwbar@rightpadding,
+                    x=\gwbar@signalwidth,
                     y=\gwbar@signalheight,
                     shift={(\gwbar@leftpadding, 0pt)},  % Shifting here is important for clipping to work
                 ]
-                    \clip[
-                    % shift={(\gwbar@leftpadding, 0pt)},
-                    % ](0, -1) rectangle ({(\paperwidth - \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 1);
-                    ](0, -1) rectangle ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 1);
+                    \clip (0, -1) rectangle ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 1);
                     
                     \draw[
-                    % shift={(\gwbar@leftpadding, 0pt)},
                     ] plot file {\gwbar@templatefilename};
                 
                 \draw[
                     shift={(-\gwbar@leftpadding, 0pt)},
                 ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
                 \end{scope}
-
-                % \draw[
-                %     % shift={(\gwbar@leftpadding+\gwbar@signalwidth, 0pt)},
-                % ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
             \end{scope}
         
         \end{tikzpicture}%

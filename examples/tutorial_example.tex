@@ -7,10 +7,9 @@
 % -- Since .sty and .txt are not in same directory, we have to give the
 % -- templatefile argument and use ../gwbar
 \usepackage[
-    % templatefile="../generic_template.txt",
-    templatefile="../eccentric_template.txt",
+    templatefile="../code/generic_template_w_noise.txt",
     signalupshift=-1.2em,
-    signalheight=2em,
+    signalheight=1.5em,
     bottompaddingwithsubtitle=0.2em,
     bottompaddingnosubtitle=0.4em,
 ]{../gwbar}
@@ -29,15 +28,10 @@
 \usepackage{tikz}
 \usetikzlibrary{patterns}
 \tikzset{
-    gwbar@fillinglayerone/.style={
+    gwbar@fillinglayer/.style={
         red,
 		pattern=north west lines,
 		pattern color=red,
-	},
-    gwbar@fillinglayertwo/.style={
-        blue,
-		pattern=north east lines,
-		pattern color=blue,
 	},
 }
 

@@ -7,27 +7,11 @@
 % -- Since .sty and .txt are not in same directory, we have to give the
 % -- templatefile argument and use ../gwbar
 \usepackage[
-    % templatefile="../code/generic_template.txt",
-    templatefile="../code/eccentric_template.txt",
-    signalheight="framesubtitleheight",
+    templatefile="none",  % We do not want this plotted, invalid name ok
+    leftpadding=0.55\paperwidth,  % Fiducial
+    rightpadding=0.45\paperwidth,  % Choose so that \leftpadding + \rightpadding = \paperwidth
 ]{../gwbar}
 \setbeamertemplate{frametitle}[gwbar]
-
-
-\tikzset{
-    gwbar@linelayerone/.style={
-        orange,
-        dashed,
-        % line width=2pt,
-        line width=0pt,
-	},
-    gwbar@linelayertwo/.style={
-        blue,
-        opacity=0.2,
-		smooth,
-        line width=1pt,
-	},
-}
 
 
 

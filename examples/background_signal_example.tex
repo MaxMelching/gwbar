@@ -7,27 +7,10 @@
 % -- Since .sty and .txt are not in same directory, we have to give the
 % -- templatefile argument and use ../gwbar
 \usepackage[
-    % templatefile="../code/generic_template.txt",
-    templatefile="../code/eccentric_template.txt",
-    signalheight="framesubtitleheight",
+    templatefile="../code/generic_template_no_noise.txt",
+    backgroundsignal="../code/generic_template_w_noise.txt",
 ]{../gwbar}
 \setbeamertemplate{frametitle}[gwbar]
-
-
-\tikzset{
-    gwbar@linelayerone/.style={
-        orange,
-        dashed,
-        % line width=2pt,
-        line width=0pt,
-	},
-    gwbar@linelayertwo/.style={
-        blue,
-        opacity=0.2,
-		smooth,
-        line width=1pt,
-	},
-}
 
 
 

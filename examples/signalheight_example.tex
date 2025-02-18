@@ -8,7 +8,7 @@
 % -- templatefile argument and use ../gwbar
 \newlength{\customheight}
 \usepackage[
-    templatefile="../generic_template.txt",
+    templatefile="../code/generic_template.txt",
     % -- In the following we explore many different types of signalheight input
     % signalheight="frametitleheight",
     % signalheight="framesubtitleheight",
@@ -37,6 +37,9 @@ Another slide
 \end{frame}
 
 \setlength{\customheight}{0em}  % Only relevant for signalheight=\customheight
+% -- Height of 0 is bad, no bar can be seen. If your intention was to
+% -- draw a flat line, check out the flat_progressbar file to see how
+% -- this can be achieved.
 \begin{frame}[t]{Frame Title}{Frame Subtitle}
 This is the last slide
 \end{frame}

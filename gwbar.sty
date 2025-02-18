@@ -1,5 +1,5 @@
 %% start of file `gwbar.sty'.
-%% Copyright 2024 Max Melching (m-melching@web.de).
+%% Copyright 2025 Max Melching (m-melching@web.de).
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License version 1.3c,
@@ -33,6 +33,10 @@
 \newlength{\gwbar@bottompadding@withsubtitle}
 \setlength{\gwbar@bottompadding@withsubtitle}{0pt}
 
+\def\gwbar@declaretitlebox{true}
+
+\def\gwbar@backgroundtemplatefilename{"none"}
+
 
 \RequirePackage{xkeyval}
 \DeclareOptionX{templatefile}{\renewcommand{\gwbar@templatefilename}{#1}}
@@ -42,6 +46,8 @@
 \DeclareOptionX{signalupshift}{\setlength{\gwbar@signalupshift}{#1}}
 \DeclareOptionX{bottompaddingnosubtitle}{\setlength{\gwbar@bottompadding@nosubtitle}{#1}}
 \DeclareOptionX{bottompaddingwithsubtitle}{\setlength{\gwbar@bottompadding@withsubtitle}{#1}}
+\DeclareOptionX{declaretitlebox}{\renewcommand{\gwbar@declaretitlebox}{#1}}
+\DeclareOptionX{backgroundsignal}{\renewcommand{\gwbar@backgroundtemplatefilename}{#1}}
 \ProcessOptionsX
 
 
@@ -71,6 +77,7 @@
 
 % -- More gwbar lengths
 \newlength{\gwbar@signalheight}  % Set automatically in template (at the moment)
+\setlength{\gwbar@signalheight}{2em}  % Set some default
 \newlength{\gwbar@signalwidth}  % Calculated based on leftpadding, rightpadding
 
 \newlength{\gwbar@yshiftpicture}  % Calculated automatically in template
@@ -337,3 +344,92 @@
 %     \end{frame}
 % }{%
 % }
+
+
+
+\ifthenelse{\equal{\gwbar@declaretitlebox}{true}}{}{%
+    \setlength{\gwbar@signalheight}{\gwbar@signalheight@given}
+    % \setlength{\gwbar@signalheight}{1em}
+    \setlength{\gwbar@signalwidth}{\paperwidth - \gwbar@leftpadding - \gwbar@rightpadding}%
+    \setlength{\gwbar@yshiftpicture}{\gwbar@signalupshift}
+    % 
+    % 
+    % \addtobeamertemplate{frametitle}{}{%
+    \defbeamertemplate{headline}{gwbar}{%
+        % \usebeamertemplate*{simplergwbar}
+        % \simplergwbar
+        % \usebeamertemplate*{frametitle}[gwbar]
+        % 
+        \begin{tikzpicture}[
+            remember picture,
+            overlay,
+            shift={($(current page.north west)+(0pt,\gwbar@yshiftpicture)$)},
+        ]
+            % -- Order matters, first one is supposed to serve as background signal
+            \begin{scope}[
+                gwbar@linelayertwo,
+            ]   
+                \begin{scope}[
+                    x=\gwbar@signalwidth,%+\gwbar@rightpadding,
+                    y=\gwbar@signalheight,
+                    shift={(\gwbar@leftpadding, 0pt)},  % Shifting here is important for clipping to work
+                ]
+                    \ifthenelse{\equal{\gwbar@backgroundtemplatefilename}{"none"}}{
+                        \clip ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, -1) rectangle ({\gwbar@signalwidth + \gwbar@rightpadding}, 1);
+                        
+                        \draw[
+                    % shift={(\gwbar@leftpadding, 0pt)},
+                        ] plot file {\gwbar@templatefilename};
+                    }{
+                        \draw[
+                    % shift={(\gwbar@leftpadding, 0pt)},
+                        ] plot file {\gwbar@backgroundtemplatefilename};
+                    }
+                
+                \draw[
+                    shift={(-\gwbar@leftpadding, 0pt)},
+                ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
+                \end{scope}
+
+                % \draw[
+                %     % shift={(\gwbar@leftpadding+\gwbar@signalwidth, 0pt)},
+                % ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
+            \end{scope}
+            
+            \begin{scope}[
+                gwbar@linelayerone,
+            ]
+                \draw[
+                ] (0, 0) -- (\gwbar@leftpadding, 0);
+                
+                \begin{scope}[
+                    x=\gwbar@signalwidth,%+\gwbar@rightpadding,
+                    y=\gwbar@signalheight,
+                    shift={(\gwbar@leftpadding, 0pt)},  % Shifting here is important for clipping to work
+                ]
+                    \clip[
+                    % shift={(\gwbar@leftpadding, 0pt)},
+                    % ](0, -1) rectangle ({(\paperwidth - \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 1);
+                    ](0, -1) rectangle ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 1);
+                    
+                    \draw[
+                    % shift={(\gwbar@leftpadding, 0pt)},
+                    ] plot file {\gwbar@templatefilename};
+                
+                \draw[
+                    shift={(-\gwbar@leftpadding, 0pt)},
+                ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
+                \end{scope}
+
+                % \draw[
+                %     % shift={(\gwbar@leftpadding+\gwbar@signalwidth, 0pt)},
+                % ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
+            \end{scope}
+        
+        \end{tikzpicture}%
+    }
+    % 
+    % \addtobeamertemplate{title page}{}{%
+    %   \setbeamertemplate{headline}{}%
+    % }
+}

@@ -108,6 +108,8 @@
 
 
 
+\ifthenelse{\equal{\gwbar@declaretitlebox}{true}}{
+
 \defbeamertemplate{frametitle}{gwbar}{%
     % -- Box measurements first
     % -- NOTE: not having blank lines is important for spacing reasons.
@@ -307,25 +309,21 @@
         \vspace*{\gwbar@bottompadding@withsubtitle}%
     \fi%
 }
-
-
-% \ifthenelse{\equal{\gwbar@signalheight@given}{"framesubtitleheight"}}{%
-%     \begin{frame}<0>[noframenumbering]{Frame Title}{Frame Subtitle}
-%     \end{frame}
-% }{%
-% }
-
-
-
-\ifthenelse{\equal{\gwbar@declaretitlebox}{true}}{}{%
-    \setlength{\gwbar@signalheight}{\gwbar@signalheight@given}
+% 
+}{
+% 
+    \ifthenelse{\equal{\gwbar@signalheight@given}{"frametitleheight"} \or \equal{\gwbar@signalheight@given}{"framesubtitleheight"}}{
+        % -- Use default value of signalheight
+    }{
+        \setlength{\gwbar@signalheight}{\gwbar@signalheight@given}
+    }
     \setlength{\gwbar@signalwidth}{\paperwidth - \gwbar@leftpadding - \gwbar@rightpadding}
     \setlength{\gwbar@yshiftpicture}{\gwbar@signalupshift}
     % -- Could just use signalupshift in options below, but I can see
     % -- already how this leads to issues when I do copy+paste.
 
     \defbeamertemplate{headline}{gwbar}{%
-        \begin{tikzpicture}[
+    \begin{tikzpicture}[
             remember picture,
             overlay,
             shift={($(current page.north west)+(0pt,\gwbar@yshiftpicture)$)},

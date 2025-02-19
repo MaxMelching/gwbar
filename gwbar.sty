@@ -107,10 +107,10 @@
 % TODO: potentially remove them too
 
 
+\newcommand{\drawgwbar}{
 
 \ifthenelse{\equal{\gwbar@declaretitlebox}{true}}{
-
-\defbeamertemplate{frametitle}{gwbar}{%
+% \defbeamertemplate*{frametitle}{gwbar}{%
     % -- Box measurements first
     % -- NOTE: not having blank lines is important for spacing reasons.
     % -- Always put a comment in.
@@ -308,7 +308,7 @@
     \else%
         \vspace*{\gwbar@bottompadding@withsubtitle}%
     \fi%
-}
+% }
 % 
 }{
 % 
@@ -322,7 +322,7 @@
     % -- Could just use signalupshift in options below, but I can see
     % -- already how this leads to issues when I do copy+paste.
 
-    \defbeamertemplate{headline}{gwbar}{%
+    % \defbeamertemplate{headline}{gwbar}{%
     \begin{tikzpicture}[
             remember picture,
             overlay,
@@ -374,9 +374,15 @@
             \end{scope}
         
         \end{tikzpicture}%
-    }
+    % }
     % 
     % \addtobeamertemplate{title page}{}{%
     %   \setbeamertemplate{headline}{}%
     % }
 }
+}
+
+
+\ifthenelse{\equal{\gwbar@declaretitlebox}{true}}{
+    \defbeamertemplate*{frametitle}{gwbar}{\drawgwbar{}}
+}{}

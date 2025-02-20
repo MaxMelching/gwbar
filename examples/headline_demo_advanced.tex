@@ -1,0 +1,89 @@
+\documentclass{beamer}
+\usecolortheme{spruce}
+
+
+\usepackage{heuristica} % Just for cosmetic purposes
+
+\usepackage{calc}
+% -- Since .sty and .txt are not in same directory, we have to give the
+% -- templatefile argument and use ../gwbar
+\usepackage[
+    templatefile="../code/generic_template_no_noise_whitened.txt",
+    backgroundsignal="../code/generic_template_w_noise.txt",
+    declaretitlebox=false,
+    signalupshift=-24pt,
+]{../gwbar}
+
+% -- More advanced version:
+\makeatletter
+
+% \addtobeamertemplate{frametitle}{}{\gwbar}
+% -- Does not matter where we add it, position is set to top by default
+% \def\gwheadlineshiftshift{-1pt}
+% \def\gwheadlineshiftshift{\gwbar@linewidthshift}
+% -- Represents global shift of filling, to account for linewidth
+
+\def\gwheadlineshift{-1em}  % Represents shift we want to pad by
+\def\gwheadlineshiftshift{0pt}
+
+\addtobeamertemplate{frametitle}{}{%
+%
+\ifx\insertframesubtitle\@empty%
+    % -- First if is important in case where signalupshift is non-zero
+    % -- (and if no framesubtitle is set).
+    \ifdim\gwbar@signalupshift=0pt
+    \else
+        \begin{tikzpicture}[
+            remember picture,
+            overlay,
+            shift={($(current page.north west)+(0pt,\gwheadlineshiftshift)$)},
+        ]
+            \usebeamercolor[bg]{background}  % V1 to get correct color
+                \draw[
+                    % white,  % V2 to get correct color
+                    fill,
+                    % gwbar@fillinglayer,  % V3 to get correct color (and filling etc)
+                    shift={(0, \gwbar@signalupshift)},
+                ] (0, 0) rectangle (\paperwidth, \gwheadlineshift);
+        \end{tikzpicture}
+  \fi
+\fi
+% 
+% -- Order matters for appearance! We do not want to cover GW signal
+\gwbar%
+% 
+}
+\makeatother
+
+
+\usepackage{tikz}
+
+\begin{document}
+
+% -- Before begin of document, frametitle.fg is not known
+\tikzset{
+    gwbar@linelayerone/.style={
+        frametitle.fg,
+        smooth,
+        line width=0.7pt,
+	},
+}
+
+
+\begin{frame}[t]{Frame Title}
+This is the first slide
+\end{frame}
+
+\begin{frame}[t]{Frame Title}{Frame Subtitle}
+Slide number 2
+\end{frame}
+
+\begin{frame}[t]{Frame Title}
+Another slide
+\end{frame}
+
+\begin{frame}[t]{Frame Title}{Frame Subtitle}
+This is the last slide
+\end{frame}
+
+\end{document}

@@ -5,17 +5,24 @@
 
 \usepackage{heuristica} % Just for cosmetic purposes
 
-
+\usepackage{calc}
 % -- Since .sty and .txt are not in same directory, we have to give the
 % -- templatefile argument and use ../gwbar
 \usepackage[
-    templatefile="../code/generic_template_no_noise.txt",
+    templatefile="../code/generic_template_no_noise_whitened.txt",
     backgroundsignal="../code/generic_template_w_noise.txt",
     declaretitlebox=false,
-    signalupshift=-2.25em,
+    signalupshift=-24pt,
 ]{../gwbar}
+% -- Note: with this signalupshift, it sits nicely between frametitle and
+% -- framesubtitle. But on frames with no subtitle, there is an annoying
+% -- bit of overlapping frametitlebox. This is solved in the advanced
+% -- version of this file.
 
-\setbeamertemplate{headline}[gwbar]
+
+% -- Note: the following two are equivalent
+% \setbeamertemplate{headline}[gwbar]
+\addtobeamertemplate{frametitle}{}{\gwbar}
 
 
 \usepackage{tikz}

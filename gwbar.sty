@@ -214,132 +214,130 @@
 }
 
 
-\newcommand{\drawgwbar}{%
-% 
-\ifthenelse{\equal{\gwbar@declaretitlebox}{true}}{%
-    % -- Box measurements first
-    % -- NOTE: not having blank lines is important for spacing reasons.
-    % -- Always put a comment in.
-    \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
-    \@tempdima=\textwidth%
-    \advance\@tempdima by\beamer@leftmargin%
-    \advance\@tempdima by\beamer@rightmargin%
+\newcommand{\gwbar}{%
     % 
-    % 
-    \sbox{\beamer@titleboxnosubtitle}{% <- NEW
-        \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}%
-            \usebeamerfont{frametitle}%
-            \vbox{}\vskip-1ex%
-            \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
-            \strut\insertframetitle\strut\par%
-            \vskip-1ex%
-            \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
-        \end{beamercolorbox}%
-    }% <- NEW
-    % 
-    % 
-    \sbox{\beamer@titlebox}{% <- NEW
-        \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}%
-            \usebeamerfont{frametitle}%
-            \vbox{}\vskip-1ex%
-            \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
-            \strut\insertframetitle\strut\par%
-            {%
-            \ifx\insertframesubtitle\@empty%
-            \else%
-            {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
-            \fi
-            }%
-            \vskip-1ex%
-            \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
-        \end{beamercolorbox}%
-    }% <- NEW
-    \usebox{\beamer@titlebox}% <- NEW
-    % 
-    \settoheight{\gwbar@frametitleheight}{\usebox{\beamer@titlebox}}% <- NEW
-    \addtolength{\gwbar@frametitleheight}{\headheight}%
-    % 
-    \settoheight{\gwbar@frametitleheightnosubtitle}{\usebox{\beamer@titleboxnosubtitle}}% <- NEW
-    \addtolength{\gwbar@frametitleheightnosubtitle}{\headheight}%
-    % 
-    % 
-    \setlength{\gwbar@yshiftpicture}{-\gwbar@frametitleheightnosubtitle}%
-    % 
-    \setlength{\gwbar@signalwidth}{\paperwidth - \gwbar@leftpadding - \gwbar@rightpadding}%
-    \ifthenelse{\equal{\gwbar@signalheight@given}{"frametitleheight"}}{%
-        \setlength{\gwbar@signalheight}{\gwbar@frametitleheightnosubtitle - \gwbar@signalupshift}%
-        % -- -\gwbar@signalupshift to account for potential asymmetry.
-    }{%
-        \ifthenelse{\equal{\gwbar@signalheight@given}{"framesubtitleheight"}}{%
-            \ifx\insertframesubtitle\@empty%
-                % -- Problem: setting and unsetting the framesubtitle and reading
-                % -- out the height of \beamer@titlebox in between does not work.
-                % -- Thus we have to redefine a new box with a placeholder at
-                % -- framesubtitle and this is what \gwbar@subtitlebox is for.
-                \sbox{\gwbar@subtitlebox}{%
-                    \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}%
-                        \usebeamerfont{frametitle}%
-                        \vbox{}\vskip-1ex%
-                        \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
-                        \strut\insertframetitle\strut\par%
-                        {%
-                        {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}Frame Subtitle\strut\par}%
-                        }%
-                        \vskip-1ex%
-                        \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
-                    \end{beamercolorbox}%
+    \ifthenelse{\equal{\gwbar@declaretitlebox}{true}}{%
+        % -- Box measurements first
+        % -- NOTE: not having blank lines is important for spacing reasons.
+        % -- Always put a comment in.
+        \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
+        \@tempdima=\textwidth%
+        \advance\@tempdima by\beamer@leftmargin%
+        \advance\@tempdima by\beamer@rightmargin%
+        % 
+        % 
+        \sbox{\beamer@titleboxnosubtitle}{% <- NEW
+            \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}%
+                \usebeamerfont{frametitle}%
+                \vbox{}\vskip-1ex%
+                \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
+                \strut\insertframetitle\strut\par%
+                \vskip-1ex%
+                \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
+            \end{beamercolorbox}%
+        }% <- NEW
+        % 
+        % 
+        \sbox{\beamer@titlebox}{% <- NEW
+            \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}%
+                \usebeamerfont{frametitle}%
+                \vbox{}\vskip-1ex%
+                \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
+                \strut\insertframetitle\strut\par%
+                {%
+                \ifx\insertframesubtitle\@empty%
+                \else%
+                {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
+                \fi%
                 }%
-                % 
-                \settoheight{\gwbar@subtitleboxheight}{\usebox{\gwbar@subtitlebox}}%
-                \addtolength{\gwbar@subtitleboxheight}{\headheight}%
-            \else%
-                \setlength{\gwbar@subtitleboxheight}{\gwbar@frametitleheight}%
-            \fi%
-                % 
-                \setlength{\gwbar@signalheight}{\gwbar@subtitleboxheight - \gwbar@frametitleheightnosubtitle + \gwbar@signalupshift}%
+                \vskip-1ex%
+                \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
+            \end{beamercolorbox}%
+        }% <- NEW
+        \usebox{\beamer@titlebox}% <- NEW
+        % 
+        \settoheight{\gwbar@frametitleheight}{\usebox{\beamer@titlebox}}% <- NEW
+        \addtolength{\gwbar@frametitleheight}{\headheight}%
+        % 
+        \settoheight{\gwbar@frametitleheightnosubtitle}{\usebox{\beamer@titleboxnosubtitle}}% <- NEW
+        \addtolength{\gwbar@frametitleheightnosubtitle}{\headheight}%
+        % 
+        % 
+        \setlength{\gwbar@yshiftpicture}{-\gwbar@frametitleheightnosubtitle}%
+        % 
+        \setlength{\gwbar@signalwidth}{\paperwidth - \gwbar@leftpadding - \gwbar@rightpadding}%
+        \ifthenelse{\equal{\gwbar@signalheight@given}{"frametitleheight"}}{%
+            \setlength{\gwbar@signalheight}{\gwbar@frametitleheightnosubtitle - \gwbar@signalupshift}%
+            % -- -\gwbar@signalupshift to account for potential asymmetry.
         }{%
-            % -- Numerical input has been given
-            \setlength{\gwbar@signalheight}{\gwbar@signalheight@given}%
+            \ifthenelse{\equal{\gwbar@signalheight@given}{"framesubtitleheight"}}{%
+                \ifx\insertframesubtitle\@empty%
+                    % -- Problem: setting and unsetting the framesubtitle and reading
+                    % -- out the height of \beamer@titlebox in between does not work.
+                    % -- Thus we have to redefine a new box with a placeholder at
+                    % -- framesubtitle and this is what \gwbar@subtitlebox is for.
+                    \sbox{\gwbar@subtitlebox}{%
+                        \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}%
+                            \usebeamerfont{frametitle}%
+                            \vbox{}\vskip-1ex%
+                            \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
+                            \strut\insertframetitle\strut\par%
+                            {%
+                            {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}Frame Subtitle\strut\par}%
+                            }%
+                            \vskip-1ex%
+                            \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
+                        \end{beamercolorbox}%
+                    }%
+                    % 
+                    \settoheight{\gwbar@subtitleboxheight}{\usebox{\gwbar@subtitlebox}}%
+                    \addtolength{\gwbar@subtitleboxheight}{\headheight}%
+                \else%
+                    \setlength{\gwbar@subtitleboxheight}{\gwbar@frametitleheight}%
+                \fi%
+                    % 
+                    \setlength{\gwbar@signalheight}{\gwbar@subtitleboxheight - \gwbar@frametitleheightnosubtitle + \gwbar@signalupshift}%
+            }{%
+                % -- Numerical input has been given
+                \setlength{\gwbar@signalheight}{\gwbar@signalheight@given}%
+            }%
         }%
-    }%
-    % 
-    % 
-    \gwbar@gettikzpicture{}%
+        % 
+        \gwbar@gettikzpicture{}%
+        % 
+    }{% 
+        % 
+        \ifthenelse{\equal{\gwbar@signalheight@given}{"frametitleheight"} \or \equal{\gwbar@signalheight@given}{"framesubtitleheight"}}{%
+        % -- Use default value of signalheight
+        }{%
+        \setlength{\gwbar@signalheight}{\gwbar@signalheight@given}%
+        }%
+        \setlength{\gwbar@signalwidth}{\paperwidth - \gwbar@leftpadding - \gwbar@rightpadding}%
+        % \setlength{\gwbar@yshiftpicture}{\gwbar@signalupshift}%
+        \setlength{\gwbar@yshiftpicture}{0pt}%
+        % -- Could just use signalupshift in options below, but I can see
+        % -- already how this leads to issues when I do copy+paste.
+        % 
+        \gwbar@gettikzpicture{}%
+        %
+    }
     % 
     % -- Account for some of the offset, while not pushing into the signal
-    \vspace*{-\gwbar@signalupshift}% TODO: decide whether this helps
+    % \vspace*{-\gwbar@signalupshift}% TODO: decide whether this helps
     \ifx\insertframesubtitle\@empty%
-        \vspace*{0.25\gwbar@signalheight}%
+        % \vspace*{0.25\gwbar@signalheight}%
         \vspace*{\gwbar@bottompadding@nosubtitle}%
     \else%
         \vspace*{\gwbar@bottompadding@withsubtitle}%
     \fi%
-% }
-% 
-}{%
-% 
-    \ifthenelse{\equal{\gwbar@signalheight@given}{"frametitleheight"} \or \equal{\gwbar@signalheight@given}{"framesubtitleheight"}}{%
-        % -- Use default value of signalheight
-    }{%
-        \setlength{\gwbar@signalheight}{\gwbar@signalheight@given}%
-    }%
-    \setlength{\gwbar@signalwidth}{\paperwidth - \gwbar@leftpadding - \gwbar@rightpadding}%
-    % \setlength{\gwbar@yshiftpicture}{\gwbar@signalupshift}%
-    \setlength{\gwbar@yshiftpicture}{0pt}%
-    % -- Could just use signalupshift in options below, but I can see
-    % -- already how this leads to issues when I do copy+paste.
-    % 
-    \gwbar@gettikzpicture{}%
-    % }
-    % 
-    % \addtobeamertemplate{title page}{}{%
-    %   \setbeamertemplate{headline}{}%
-    % }
-}
 }
 
 
-% -- Still define a beamertemplate for more straightforward use
+% -- Still define beamertemplates for more straightforward use
 \ifthenelse{\equal{\gwbar@declaretitlebox}{true}}{
-    \defbeamertemplate*{frametitle}{gwbar}{\drawgwbar{}}
-}{}
+    \defbeamertemplate{frametitle}{gwbar}{\gwbar{}}
+}{
+    \defbeamertemplate{headline}{gwbar}{\gwbar{}}
+}
+% -- We do NOT want to use * here because \addtobeamertemplate is a valid use
+% -- use now, so we do not want to force use via headilne template.

@@ -26,14 +26,21 @@
 \newlength{\gwbar@signalupshift}  % Amount by which signal is shifted up from where frametitle ends and subtitle begins
 \setlength{\gwbar@signalupshift}{3pt}  % Fiducial default value, is nice for some separation between line and framesubtitle
 
+\newlength{\gwbar@bottompadding}
+\setlength{\gwbar@bottompadding}{0pt}
 \newlength{\gwbar@bottompadding@nosubtitle}
 \setlength{\gwbar@bottompadding@nosubtitle}{0pt}
 \newlength{\gwbar@bottompadding@withsubtitle}
 \setlength{\gwbar@bottompadding@withsubtitle}{0pt}
 
-\def\gwbar@declaretitlebox{true}
+\RequirePackage{etoolbox}
+\newtoggle{gwbar@declaretitlebox}
+\toggletrue{gwbar@declaretitlebox}  % Default
 
 \def\gwbar@backgroundtemplatefilename{"none"}
+
+\newtoggle{gwbar@progressbar}
+\toggletrue{gwbar@progressbar}  % Default
 
 
 \RequirePackage{xkeyval}
@@ -42,10 +49,12 @@
 \DeclareOptionX{rightpadding}{\setlength{\gwbar@rightpadding}{#1}}
 \DeclareOptionX{signalheight}{\renewcommand{\gwbar@signalheight@given}{#1}}
 \DeclareOptionX{signalupshift}{\setlength{\gwbar@signalupshift}{#1}}
+\DeclareOptionX{bottompadding}{\setlength{\gwbar@bottompadding}{#1}}
 \DeclareOptionX{bottompaddingnosubtitle}{\setlength{\gwbar@bottompadding@nosubtitle}{#1}}
 \DeclareOptionX{bottompaddingwithsubtitle}{\setlength{\gwbar@bottompadding@withsubtitle}{#1}}
-\DeclareOptionX{declaretitlebox}{\renewcommand{\gwbar@declaretitlebox}{#1}}
+\DeclareOptionX{declaretitlebox}{\settoggle{gwbar@declaretitlebox}{#1}}
 \DeclareOptionX{backgroundsignal}{\renewcommand{\gwbar@backgroundtemplatefilename}{#1}}
+\DeclareOptionX{progressbar}{\settoggle{gwbar@progressbar}{#1}}
 \ProcessOptionsX
 
 
@@ -150,7 +159,7 @@
         % TODO: is this still required? I mean we clip, might look strange if we do not account for it...
 
 
-        \ifthenelse{\equal{\gwbar@declaretitlebox}{true}}{
+        \iftoggle{gwbar@declaretitlebox}{
             \ifx\insertframesubtitle\@empty%
                 % -- Important in case where signalupshift is non-zero (and if no framesubtitle is set)
                 \ifdim\gwbar@signalupshift=0pt
@@ -173,10 +182,12 @@
             shift={(\gwbar@leftpadding, \gwbar@signalupshift)},  % Shifting here is important for clipping to work
         ]
             \ifthenelse{\equal{\gwbar@backgroundtemplatefilename}{"none"}}{
-                \clip ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, -1) rectangle ({\gwbar@signalwidth + \gwbar@rightpadding}, 1);
-                
-                \draw[
-                ] plot file {\gwbar@templatefilename};
+                \iftoggle{gwbar@progressbar}{
+                    \clip ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, -1) rectangle ({\gwbar@signalwidth + \gwbar@rightpadding}, 1);
+                    
+                    \draw[
+                    ] plot file {\gwbar@templatefilename};
+                }{}
             }{
                 \draw[
                 ] plot file {\gwbar@backgroundtemplatefilename};
@@ -200,7 +211,9 @@
                 y=\gwbar@signalheight,
                 shift={(\gwbar@leftpadding, 0pt)},  % Shifting here is important for clipping to work
             ]
-                \clip (0, -1) rectangle ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 1);
+                \iftoggle{gwbar@progressbar}{
+                    \clip (0, -1) rectangle ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 1);
+                }{}
                 
                 \draw[
                 ] plot file {\gwbar@templatefilename};
@@ -214,9 +227,9 @@
 }
 
 
-\newcommand{\gwbar}{%
+\newcommand{\gwbar}[1][]{%
     % 
-    \ifthenelse{\equal{\gwbar@declaretitlebox}{true}}{%
+    \iftoggle{gwbar@declaretitlebox}{%
         % -- Box measurements first
         % -- NOTE: not having blank lines is important for spacing reasons.
         % -- Always put a comment in.
@@ -308,9 +321,9 @@
     }{% 
         % 
         \ifthenelse{\equal{\gwbar@signalheight@given}{"frametitleheight"} \or \equal{\gwbar@signalheight@given}{"framesubtitleheight"}}{%
-        % -- Use default value of signalheight
+            % -- Use default value of signalheight
         }{%
-        \setlength{\gwbar@signalheight}{\gwbar@signalheight@given}%
+            \setlength{\gwbar@signalheight}{\gwbar@signalheight@given}%
         }%
         \setlength{\gwbar@signalwidth}{\paperwidth - \gwbar@leftpadding - \gwbar@rightpadding}%
         % \setlength{\gwbar@yshiftpicture}{\gwbar@signalupshift}%
@@ -324,20 +337,27 @@
     % 
     % -- Account for some of the offset, while not pushing into the signal
     % \vspace*{-\gwbar@signalupshift}% TODO: decide whether this helps
-    \ifx\insertframesubtitle\@empty%
-        % \vspace*{0.25\gwbar@signalheight}%
-        \vspace*{\gwbar@bottompadding@nosubtitle}%
-    \else%
-        \vspace*{\gwbar@bottompadding@withsubtitle}%
-    \fi%
+    \@ifclassloaded{beamer}{%
+        \ifx\insertframesubtitle\@empty%
+            % \vspace*{0.25\gwbar@signalheight}%
+            \vspace*{\gwbar@bottompadding@nosubtitle}%
+        \else%
+            \vspace*{\gwbar@bottompadding@withsubtitle}%
+        \fi%
+    }{%
+    }%
+    % -- bottompadding is added on top
+    \vspace*{\gwbar@bottompadding}%
 }
 
 
 % -- Still define beamertemplates for more straightforward use
-\ifthenelse{\equal{\gwbar@declaretitlebox}{true}}{
-    \defbeamertemplate{frametitle}{gwbar}{\gwbar{}}
-}{
-    \defbeamertemplate{headline}{gwbar}{\gwbar{}}
-}
-% -- We do NOT want to use * here because \addtobeamertemplate is a valid use
-% -- use now, so we do not want to force use via headilne template.
+\@ifclassloaded{beamer}{
+    \iftoggle{gwbar@declaretitlebox}{
+        \defbeamertemplate{frametitle}{gwbar}{\gwbar{}}
+    }{
+        \defbeamertemplate{headline}{gwbar}{\gwbar{}}
+    }
+    % -- We do NOT want to use * here because \addtobeamertemplate is a valid use
+    % -- use now, so we do not want to force use via headilne template.
+}{}

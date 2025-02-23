@@ -13,36 +13,75 @@
 \newcommand{\gwbar@templatefilename}{"generic_template.txt"}
 
 \newlength{\gwbar@leftpadding}  % Where signal starts, measured from left end of frame
-\setlength{\gwbar@leftpadding}{0.6\textwidth} % Some fiducial default values
-
 \newlength{\gwbar@rightpadding}  % Where signal ends, measured from right end of frame
-\setlength{\gwbar@rightpadding}{0.1\paperwidth} % Some fiducial default value
 
-\newcommand{\gwbar@signalheight@given}{"frametitleheight"}
-% -- Not a length for convenient comparisons, despite being slightly less robust
-% -- because it can now be any value. We choose some default that does not make
-% -- sense here for comparisons later in code.
-
+\newlength{\gwbar@signalheight}  % Set automatically in template (at the moment)
+\newlength{\gwbar@signalwidth}  % Calculated based on leftpadding, rightpadding
 \newlength{\gwbar@signalupshift}  % Amount by which signal is shifted up from where frametitle ends and subtitle begins
-\setlength{\gwbar@signalupshift}{3pt}  % Fiducial default value, is nice for some separation between line and framesubtitle
+
+\newlength{\gwbar@yshiftpicture}  % Calculated automatically in template
 
 \newlength{\gwbar@bottompadding}
-\setlength{\gwbar@bottompadding}{0pt}
 \newlength{\gwbar@bottompadding@nosubtitle}
-\setlength{\gwbar@bottompadding@nosubtitle}{0pt}
 \newlength{\gwbar@bottompadding@withsubtitle}
-\setlength{\gwbar@bottompadding@withsubtitle}{0pt}
 
 \RequirePackage{etoolbox}
 \newtoggle{gwbar@declaretitlebox}
-\toggletrue{gwbar@declaretitlebox}  % Default
 
 \def\gwbar@backgroundtemplatefilename{"none"}
 
 \newtoggle{gwbar@progressbar}
-\toggletrue{gwbar@progressbar}  % Default
+
+\newlength{\gwbar@headlinewidth@given}
+\newlength{\gwbar@headlinewidth}
+
+\newlength{\gwbar@linestyle@linewidth}
+\newlength{\gwbar@bglinestyle@linewidth}
+\newlength{\gwbar@linewidthshift}
 
 
+% -- Set sensible defaults
+\setlength{\gwbar@bottompadding}{0pt}
+\setlength{\gwbar@bottompadding@nosubtitle}{0pt}
+\setlength{\gwbar@bottompadding@withsubtitle}{0pt}
+\setlength{\gwbar@headlinewidth@given}{\textwidth}
+
+
+\@ifclassloaded{beamer}{
+    \setlength{\gwbar@leftpadding}{0.6\textwidth}
+    \setlength{\gwbar@rightpadding}{0.1\paperwidth}
+    
+    \setlength{\gwbar@signalupshift}{3pt}
+    % -- Fiducial default value, is nice for some separation between
+    % -- line and framesubtitle
+
+    \def\gwbar@signalheight@given{"frametitleheight"}
+    % -- Not a length for convenient comparisons, despite being slightly
+    % -- less robust because it can now be any value. We choose some default
+    % -- that does not make sense here for comparisons later in code.
+    \setlength{\gwbar@signalheight}{2em}  % Set some default
+    
+    \setlength{\gwbar@headlinewidth}{\paperwidth}
+
+    \toggletrue{gwbar@declaretitlebox}
+    \toggletrue{gwbar@progressbar}
+}{
+    \setlength{\gwbar@leftpadding}{0.45\textwidth}
+    \setlength{\gwbar@rightpadding}{0.05\textwidth}
+    
+    \setlength{\gwbar@signalupshift}{-0.5em}
+
+    \def\gwbar@signalheight@given{\headheight}
+    \setlength{\gwbar@signalheight}{2em}  % Set some default
+
+    \setlength{\gwbar@headlinewidth}{\gwbar@headlinewidth@given}
+
+    \togglefalse{gwbar@declaretitlebox}
+    \togglefalse{gwbar@progressbar}
+}
+
+
+% -- Define package options
 \RequirePackage{xkeyval}
 \DeclareOptionX{templatefile}{\renewcommand{\gwbar@templatefilename}{#1}}
 \DeclareOptionX{leftpadding}{\setlength{\gwbar@leftpadding}{#1}}
@@ -55,17 +94,45 @@
 \DeclareOptionX{declaretitlebox}{\settoggle{gwbar@declaretitlebox}{#1}}
 \DeclareOptionX{backgroundsignal}{\renewcommand{\gwbar@backgroundtemplatefilename}{#1}}
 \DeclareOptionX{progressbar}{\settoggle{gwbar@progressbar}{#1}}
+\DeclareOptionX{headlinewidth}{\setlength{\gwbar@headlinewidth@given}{#1}}
 \ProcessOptionsX
 
 
-% -- Dependencies
+\@ifclassloaded{beamer}{
+}{
+    % -- Ensure compatibility, this would set beamer boxes
+    \togglefalse{gwbar@declaretitlebox}
+}
+
+
+\RequirePackage{pgf}
+\pgfkeys{
+	/gwbar/.is family, /gwbar,
+    % -- No need to define default style, every variable has one already
+    templatefile/.estore in = \gwbar@templatefilename,
+    leftpadding/.estore in = \gwbar@leftpadding,
+    rightpadding/.estore in = \gwbar@rightpadding,
+    signalheight/.estore in = \gwbar@signalheight@given,
+    signalupshift/.estore in = \gwbar@signalupshift,
+    bottompadding/.estore in = \gwbar@bottompadding,
+    bottompaddingnosubtitle/.estore in = \gwbar@bottompadding@nosubtitle,
+    bottompaddingwithsubtitle/.estore in = \gwbar@bottompadding@withsubtitle,
+    % declaretitlebox/.code = {\settoggle{gwbar@declaretitlebox}{#1}},
+    backgroundsignal/.estore in = \gwbar@backgroundtemplatefilename,
+    progressbar/.code = {\settoggle{gwbar@progressbar}{#1}},
+}
+
+
+% -- Manage remaining dependencies
 \RequirePackage{calc}  % For length calculations
 \RequirePackage{xifthen}
 
 \RequirePackage{tikz}
 \usetikzlibrary{calc}
 
-\RequirePackage{beamerbasecompatibility}  % Standard for beamer packages
+\@ifclassloaded{beamer}{
+    \RequirePackage{beamerbasecompatibility}  % Standard for beamer packages
+}{}
 
 
 % -- Note: credits for box measuring code to
@@ -82,46 +149,55 @@
 \newlength{\gwbar@subtitleboxheight}
 
 
-% -- More gwbar lengths
-\newlength{\gwbar@signalheight}  % Set automatically in template (at the moment)
-\setlength{\gwbar@signalheight}{2em}  % Set some default
-\newlength{\gwbar@signalwidth}  % Calculated based on leftpadding, rightpadding
-
-\newlength{\gwbar@yshiftpicture}  % Calculated automatically in template
-
-
 % -- Define custom styles for all elements, so that they can be customized easily
-\tikzset{
-    gwbar@linelayerone/.style={
-        fg,
-        smooth,
-        line width=0.7pt,
-	},
-    gwbar@linelayertwo/.style={
-        gray!50!bg,
-        opacity=0.42,
-		smooth,
-        line width=0.7pt,
-	},
-    gwbar@fillinglayer/.style={
-        fill,
-        white,  % Default color of frame background canvas
-	},
+\@ifclassloaded{beamer}{
+    \tikzset{
+        gwbar@linestyle/.style={
+            fg,
+            smooth,
+            line width=0.7pt,
+        },
+        gwbar@bglinestyle/.style={
+            gray!50!bg,
+            opacity=0.42,
+            smooth,
+            line width=0.7pt,
+        },
+        gwbar@fillinglayer/.style={
+            fill,
+            white,  % Default color of frame background canvas
+        },
+    }
+}{
+    \tikzset{
+        gwbar@linestyle/.style={
+            smooth,
+            line width=0.7pt,
+        },
+        gwbar@bglinestyle/.style={
+            smooth,
+            gray!42,
+            line width=0.7pt,
+        },
+    }
 }
 
 
-\newlength{\gwbar@linelayerone@linewidth}
-\newlength{\gwbar@linelayertwo@linewidth}
-\newlength{\gwbar@linewidthshift}
-% TODO: potentially remove them too
-
 
 \newcommand{\gwbar@gettikzpicture}{%
-    \begin{tikzpicture}[
-        remember picture,
-        overlay,
-        shift={($(current page.north west)+(0pt,\gwbar@yshiftpicture)$)},
-    ]%
+    \@ifclassloaded{beamer}{%
+        \begin{tikzpicture}[
+            remember picture,
+            overlay,
+            shift={($(current page.north west)+(0pt,\gwbar@yshiftpicture)$)},
+        ]%
+    }{%
+        \begin{tikzpicture}[
+            remember picture,
+            overlay,
+            % shift={($(current page.north west)+(0pt,\gwbar@yshiftpicture)$)},
+        ]%
+    }%
         % -- NOTE: order in this picture matters for color and overlay etc
         % -- (which is why we often have part one and two). Also, spaces don't
         % -- matter in tikzpictures, so at least no issues with that.
@@ -131,16 +207,16 @@
         % -- NOTE: setlength alone does not work because scope is local. To set
         % -- globally, in a way compatible with the calc package, we need some extras.
         % -- Cf. https://tex.stackexchange.com/questions/119730/global-scope-or-permanent-length-or-savebox
-        \begin{scope}[gwbar@linelayerone]
-            \setlength{\gwbar@linelayerone@linewidth}{\pgflinewidth}
-            \global\gwbar@linelayerone@linewidth=\gwbar@linelayerone@linewidth
+        \begin{scope}[gwbar@linestyle]
+            \setlength{\gwbar@linestyle@linewidth}{\pgflinewidth}
+            \global\gwbar@linestyle@linewidth=\gwbar@linestyle@linewidth
         \end{scope}
-        \begin{scope}[gwbar@linelayertwo]
-            \setlength{\gwbar@linelayertwo@linewidth}{\pgflinewidth}
-            \global\gwbar@linelayertwo@linewidth=\gwbar@linelayertwo@linewidth
+        \begin{scope}[gwbar@bglinestyle]
+            \setlength{\gwbar@bglinestyle@linewidth}{\pgflinewidth}
+            \global\gwbar@bglinestyle@linewidth=\gwbar@bglinestyle@linewidth
         \end{scope}
         % NOTE: \pgfkeysifdefined would not work if value is thick, we need numerical value
-        \pgfmathsetmacro{\gwbar@maxlinewidth}{max(\gwbar@linelayerone@linewidth, \gwbar@linelayertwo@linewidth)}
+        \pgfmathsetmacro{\gwbar@maxlinewidth}{max(\gwbar@linestyle@linewidth, \gwbar@bglinestyle@linewidth)}
         \setlength{\gwbar@linewidthshift}{\gwbar@maxlinewidth pt + \gwbar@maxlinewidth pt}  % Take double as safety bed
 
 
@@ -176,7 +252,7 @@
         % -- Order matters, first one is supposed to serve as background
         % -- signal (if a background signal is given).
         \begin{scope}[
-            gwbar@linelayertwo,
+            gwbar@bglinestyle,
             x=\gwbar@signalwidth,
             y=\gwbar@signalheight,
             shift={(\gwbar@leftpadding, \gwbar@signalupshift)},  % Shifting here is important for clipping to work
@@ -185,9 +261,22 @@
                 \iftoggle{gwbar@progressbar}{
                     \clip ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, -1) rectangle ({\gwbar@signalwidth + \gwbar@rightpadding}, 1);
                     
-                    \draw[
-                    ] plot file {\gwbar@templatefilename};
-                }{}
+                    \ifthenelse{\equal{\gwbar@templatefilename}{"none"}}{
+                        \draw[
+                        ] (0, 0) -- (\gwbar@signalwidth, 0);
+                    }{
+                        \draw[
+                        ] plot file {\gwbar@templatefilename};
+                    }
+                }{
+                    \ifthenelse{\equal{\gwbar@templatefilename}{"none"}}{
+                        \draw[
+                        ] (0, 0) -- (\gwbar@signalwidth, 0);
+                    }{
+                        \draw[
+                        ] plot file {\gwbar@templatefilename};
+                    }
+                }
             }{
                 \draw[
                 ] plot file {\gwbar@backgroundtemplatefilename};
@@ -195,12 +284,12 @@
         
             \draw[
                 shift={(-\gwbar@leftpadding, 0pt)},
-            ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
+            ] ({\gwbar@headlinewidth - \gwbar@rightpadding}, 0) -- (\gwbar@headlinewidth, 0);
         \end{scope}
         
         % -- Plot part of signal that is visible for current progress
         \begin{scope}[
-            gwbar@linelayerone,
+            gwbar@linestyle,
             shift={(0pt, \gwbar@signalupshift)},
         ]
             \draw[
@@ -214,20 +303,27 @@
                 \iftoggle{gwbar@progressbar}{
                     \clip (0, -1) rectangle ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 1);
                 }{}
-                
-                \draw[
-                ] plot file {\gwbar@templatefilename};
+
+                \ifthenelse{\equal{\gwbar@templatefilename}{"none"}}{
+                    \draw[
+                    ] (0, 0) -- (\gwbar@signalwidth, 0);
+                }{
+                    \draw[
+                    ] plot file {\gwbar@templatefilename};
+                }
             
             \draw[
                 shift={(-\gwbar@leftpadding, 0pt)},
-            ] ({\paperwidth - \gwbar@rightpadding}, 0) -- (\paperwidth, 0);
+            ] ({\gwbar@headlinewidth - \gwbar@rightpadding}, 0) -- (\gwbar@headlinewidth, 0);
             \end{scope}
         \end{scope}
     \end{tikzpicture}%
 }
 
 
+
 \newcommand{\gwbar}[1][]{%
+    \pgfkeys{/gwbar, #1}%
     % 
     \iftoggle{gwbar@declaretitlebox}{%
         % -- Box measurements first
@@ -278,7 +374,7 @@
         % 
         \setlength{\gwbar@yshiftpicture}{-\gwbar@frametitleheightnosubtitle}%
         % 
-        \setlength{\gwbar@signalwidth}{\paperwidth - \gwbar@leftpadding - \gwbar@rightpadding}%
+        \setlength{\gwbar@signalwidth}{\gwbar@headlinewidth - \gwbar@leftpadding - \gwbar@rightpadding}%
         \ifthenelse{\equal{\gwbar@signalheight@given}{"frametitleheight"}}{%
             \setlength{\gwbar@signalheight}{\gwbar@frametitleheightnosubtitle - \gwbar@signalupshift}%
             % -- -\gwbar@signalupshift to account for potential asymmetry.
@@ -325,7 +421,7 @@
         }{%
             \setlength{\gwbar@signalheight}{\gwbar@signalheight@given}%
         }%
-        \setlength{\gwbar@signalwidth}{\paperwidth - \gwbar@leftpadding - \gwbar@rightpadding}%
+        \setlength{\gwbar@signalwidth}{\gwbar@headlinewidth - \gwbar@leftpadding - \gwbar@rightpadding}%
         % \setlength{\gwbar@yshiftpicture}{\gwbar@signalupshift}%
         \setlength{\gwbar@yshiftpicture}{0pt}%
         % -- Could just use signalupshift in options below, but I can see
@@ -346,17 +442,18 @@
         \fi%
     }{%
     }%
-    % -- bottompadding is added on top
+    % -- bottompadding is added on top of withsubtitle/nosubtitle
     \vspace*{\gwbar@bottompadding}%
 }
+
 
 
 % -- Still define beamertemplates for more straightforward use
 \@ifclassloaded{beamer}{
     \iftoggle{gwbar@declaretitlebox}{
-        \defbeamertemplate{frametitle}{gwbar}{\gwbar{}}
+        \defbeamertemplate{frametitle}{gwbar}{\gwbar}
     }{
-        \defbeamertemplate{headline}{gwbar}{\gwbar{}}
+        \defbeamertemplate{headline}{gwbar}{\gwbar}
     }
     % -- We do NOT want to use * here because \addtobeamertemplate is a valid use
     % -- use now, so we do not want to force use via headilne template.

@@ -103,6 +103,7 @@
 }{
     % -- Ensure compatibility, this would set beamer boxes
     \togglefalse{gwbar@declaretitlebox}
+    \togglefalse{gwbar@progressbar}
 }
 
 
@@ -120,7 +121,7 @@
     bottompaddingwithsubtitle/.estore in = \gwbar@bottompadding@withsubtitle,
     % declaretitlebox/.code = {\settoggle{gwbar@declaretitlebox}{#1}},
     backgroundsignal/.estore in = \gwbar@backgroundtemplatefilename,
-    progressbar/.code = {\settoggle{gwbar@progressbar}{#1}},
+    % progressbar/.code = {\settoggle{gwbar@progressbar}{#1}},
 }
 
 

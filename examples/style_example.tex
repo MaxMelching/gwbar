@@ -1,52 +1,42 @@
-\documentclass{beamer}
-\usecolortheme{spruce}
-
-\usepackage{heuristica} % Just for cosmetic purposes
+\documentclass{scrreprt}
 
 
-% -- Since .sty and .txt are not in same directory, we have to give the
-% -- templatefile argument and use ../gwbar
 \usepackage[
-    % templatefile="../code/generic_template.txt",
-    templatefile="../code/eccentric_template.txt",
-    signalheight="framesubtitleheight",
-]{../gwbar}
-\setbeamertemplate{frametitle}[gwbar]
+	% headsepline,  % En-/disable for checks with the GW headline
+]{scrlayer-scrpage}
+\clearmainofpairofpagestyles
+\setlength{\headheight}{\baselineskip}
+
+\usepackage[templatefile="../code/generic_template.txt"]{../gwbar}
 
 
-\tikzset{
-    gwbar@linelayerone/.style={
-        orange,
-        dashed,
-        % line width=2pt,
-        line width=0pt,
-	},
-    gwbar@linelayertwo/.style={
-        blue,
-        opacity=0.2,
-		smooth,
-        line width=1pt,
-	},
+% -- Some sample colors
+\definecolor{cobalt}{rgb}{0.0, 0.28, 0.67}
+\definecolor{burntorange}{rgb}{0.8, 0.33, 0.0}
+\definecolor{darkcerulean}{rgb}{0.03, 0.27, 0.49}
+
+\definecolor{themecolor}{named}{cobalt}
+% \definecolor{themecolor}{named}{burntorange}
+% \definecolor{themecolor}{named}{darkcerulean}
+
+
+\ihead{\gwbar[signalheight=2em]%
+    {\bfseries%
+    \color{themecolor}%
+    Test Header}%
 }
 
+\tikzset{
+    gwbar@linestyle/.style={
+        themecolor,
+		smooth,
+		line width=1.42pt,
+	}
+}
 
 
 \begin{document}
 
-\begin{frame}[t]{Frame Title}
-This is the first slide
-\end{frame}
-
-\begin{frame}[t]{Frame Title}{Frame Subtitle}
-Slide number 2
-\end{frame}
-
-\begin{frame}[t]{Frame Title}
-Another slide
-\end{frame}
-
-\begin{frame}[t]{Frame Title}{Frame Subtitle}
-This is the last slide
-\end{frame}
+Hello there
 
 \end{document}

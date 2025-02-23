@@ -1,0 +1,34 @@
+\documentclass{scrartcl}
+
+
+\usepackage[
+	%headsepline,  % En-/disable for checks with the GW headline
+    % automark,
+]{scrlayer-scrpage}
+\clearmainofpairofpagestyles
+\setlength{\headheight}{\baselineskip}
+\automark{section}
+\setkomafont{section}{\rmfamily\Large\bfseries}
+
+
+% -- Now use the package
+% -- NOTE: since .sty and .txt are not in same directory, we have to give
+% -- the templatefile argument and use ../gwbar
+\usepackage[
+	templatefile="../code/generic_template.txt",
+	rightpadding=0.12\textwidth,
+]{../gwbar}
+
+\ihead{\gwbar{}\headmark}
+\ohead{\small Max Melching}
+% \chead{\gwbar}
+
+
+
+\begin{document}
+
+\section{Descriptive Caption}
+
+Hello there
+
+\end{document}

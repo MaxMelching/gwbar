@@ -1,0 +1,54 @@
+\documentclass{scrreprt}
+
+
+\usepackage[
+	% headsepline,  % En-/disable for checks with the GW headline
+]{scrlayer-scrpage}
+\clearmainofpairofpagestyles
+\setlength{\headheight}{\baselineskip}
+
+
+% -- Now use the package
+% -- NOTE: since .sty and .txt are not in same directory, we have to give
+% -- the templatefile argument and use ../gwbar
+\usepackage[
+    % templatefile="../code/generic_template_no_noise.txt",
+    templatefile="../code/generic_template_no_noise_whitened.txt",
+    backgroundsignal="../code/generic_template_w_noise.txt",
+    signalheight=24pt,
+]{../gwbar}
+
+
+\usepackage{xcolor}
+\definecolor{midnightblue}{rgb}{0.1, 0.1, 0.44}
+
+\tikzset{
+    gwbar@linestyle/.style={
+        smooth,
+        very thick,
+        midnightblue,
+    },
+    gwline@bglinestyle/.style={
+        smooth,
+        ultra thick,
+        gray!50,
+    }
+}
+
+
+\ihead{%
+	\color{midnightblue}%
+	\gwbar[
+	% Potentially Different Options
+	]%
+	Test Header%
+}
+% -- NOTE: this is the intended way of using the command. \ohead or \head would
+% -- work as well, but only with some extra work (see the file alignment_example).
+
+
+\begin{document}
+
+Hello there
+
+\end{document}

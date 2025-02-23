@@ -1,0 +1,26 @@
+\documentclass{report}
+
+
+\usepackage{fancyhdr}
+% \usepackage[headheight=2em]{geometry}
+\setlength{\headheight}{2em}  % More manual, but equivalent to use of geometry
+
+
+\usepackage[templatefile="../code/generic_template.txt"]{../gwbar}
+
+% -- Advantage: very convenient to redefine headrule, without having to redefine
+% -- any of inner/center/outer part of head.
+\renewcommand{\headrule}{\gwbar{}}
+
+\pagestyle{fancy}
+\fancyhf{}  % Reset head and foot
+% \fancyhead[LE]{\nouppercase{\rightmark\hfill\leftmark}}
+% \fancyhead[RO]{\nouppercase{\leftmark\hfill\rightmark}}
+% \fancyfoot[LE,RO]{\hfill\thepage\hfill}
+
+
+\begin{document}
+
+Hello there
+
+\end{document}

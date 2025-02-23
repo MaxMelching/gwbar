@@ -1,0 +1,25 @@
+\documentclass{scrreprt}
+
+\usepackage{scrlayer-scrpage}
+\clearmainofpairofpagestyles
+\ihead{Pre-defined Inner Header}
+
+
+\usepackage[templatefile="../code/generic_template.txt"]{../gwbar}
+
+% -- Scenario: you cannot set \ihead, e.g. because it is already defined.
+% -- In that case, either of the following can be used as an alternative.
+% \ohead{\raggedright\gwbar}
+\ohead{%
+    \raggedright%
+    \gwbar[rightpadding=0.12\textwidth]%
+    \hfill%
+    Outer Text%
+}
+
+
+\begin{document}
+
+Hello there
+
+\end{document}

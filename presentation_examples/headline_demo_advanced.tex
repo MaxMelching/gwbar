@@ -19,12 +19,12 @@
 
 % \addtobeamertemplate{frametitle}{}{\gwbar}
 % -- Does not matter where we add it, position is set to top by default
-% \def\gwheadlineshiftshift{-1pt}
-% \def\gwheadlineshiftshift{\gwbar@linewidthshift}
+% \def\gwbarshiftshift{-1pt}
+% \def\gwbarshiftshift{\gwbar@linewidthshift}
 % -- Represents global shift of filling, to account for linewidth
 
-\def\gwheadlineshift{-1em}  % Represents shift we want to pad by
-\def\gwheadlineshiftshift{0pt}
+\def\gwbarshift{-1em}  % Represents shift we want to pad by
+\def\gwbarshiftshift{0pt}
 
 \addtobeamertemplate{frametitle}{}{%
 %
@@ -36,7 +36,7 @@
         \begin{tikzpicture}[
             remember picture,
             overlay,
-            shift={($(current page.north west)+(0pt,\gwheadlineshiftshift)$)},
+            shift={($(current page.north west)+(0pt,\gwbarshiftshift)$)},
         ]
             \usebeamercolor[bg]{background}  % V1 to get correct color
                 \draw[
@@ -44,7 +44,7 @@
                     fill,
                     % gwbar@fillinglayer,  % V3 to get correct color (and filling etc)
                     shift={(0, \gwbar@signalupshift)},
-                ] (0, 0) rectangle (\paperwidth, \gwheadlineshift);
+                ] (0, 0) rectangle (\paperwidth, \gwbarshift);
         \end{tikzpicture}
   \fi
 \fi
@@ -62,7 +62,7 @@
 
 % -- Before begin of document, frametitle.fg is not known
 \tikzset{
-    gwbar@linelayerone/.style={
+    gwbar@linestyle/.style={
         frametitle.fg,
         smooth,
         line width=0.7pt,

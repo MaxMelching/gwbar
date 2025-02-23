@@ -1,0 +1,56 @@
+\documentclass{beamer}
+\usecolortheme{spruce}
+
+\usepackage{heuristica} % Just for cosmetic purposes
+
+
+% -- Since .sty and .txt are not in same directory, we have to give the
+% -- templatefile argument and use ../gwbar
+\usepackage[
+    % -- Global Options
+    declaretitlebox=false,
+]{../gwbar}
+
+
+\makeatletter
+\addtobeamertemplate{frametitle}{}{%
+    % -- Pass all other options to the respective calls, some commands
+    % -- are always renewed and only this makes things work as intended.
+    \setlength{\gwbar@signalupshift}{-24pt}%
+    \gwbar[%
+        templatefile="../code/generic_template_no_noise_whitened.txt",
+        backgroundsignal="../code/generic_template_w_noise.txt",
+    ]%
+    % -- V1
+    % \setlength{\gwbar@signalupshift}{-\paperheight+24pt}%
+    % \gwbar%
+    % -- V2
+    \gwbar[%
+        templatefile="../code/generic_template_no_noise.txt",
+        backgroundsignal="none",
+        signalupshift=-\paperheight+24pt,
+    ]
+}
+\makeatother
+
+
+
+\begin{document}
+
+\begin{frame}[t]{Frame Title}
+This is the first slide
+\end{frame}
+
+\begin{frame}[t]{Frame Title}{Frame Subtitle}
+Slide number 2
+\end{frame}
+
+\begin{frame}[t]{Frame Title}
+Another slide
+\end{frame}
+
+\begin{frame}[t]{Frame Title}{Frame Subtitle}
+This is the last slide
+\end{frame}
+
+\end{document}

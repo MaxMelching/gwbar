@@ -1,0 +1,59 @@
+\documentclass[twoside]{scrartcl}
+
+
+\usepackage[
+	automark,
+]{scrlayer-scrpage}
+\clearmainofpairofpagestyles
+
+% -- Some section stylings, for nice display in header
+\automark{section}
+\automark*{subsection}
+
+\setkomafont{section}{\rmfamily\Large\bfseries}
+\setkomafont{subsection}{\rmfamily\large\slshape}
+
+
+\setlength{\headheight}{2em}  % Has to be before gwbar is loaded
+
+\usepackage[
+	templatefile="../code/generic_template.txt",
+]{../gwbar}
+
+
+% -- Idea: on left side, we want GW on righthand side but none on lefthand
+% -- side. This can be achieved by passing templatefile="None" to one of
+% -- the headparts (here we do that for odd pages).
+\clearmainofpairofpagestyles
+\lohead{\gwbar[templatefile="none",progressbar=false]{}\pagemark}
+\rohead{\leftmark}
+\lehead{\gwbar{}\leftmark}
+\rehead{\pagemark}
+
+% -- NOTE: the corresponding fancyhdr commands would be:
+% \pagestyle{fancy}
+% \fancyhf{}
+% \fancyhead[LO]{...}
+% \fancyhead[RO]{...}
+% \fancyhead[LE]{...}
+% \fancyhead[RE]{...}
+
+
+% -- NOTE: redefining the gwbar@linestyle here (as in the style_example file)
+% -- the style is applied for both gwbar calls, no issues here.
+
+
+
+\begin{document}
+
+\section{This Is A Section}
+
+Hello there
+
+\newpage
+
+	\subsection{Here We Have A Subsection}
+
+Hello there (again)
+
+\end{document}

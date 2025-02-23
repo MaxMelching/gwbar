@@ -44,7 +44,6 @@
 \setlength{\gwbar@bottompadding}{0pt}
 \setlength{\gwbar@bottompadding@nosubtitle}{0pt}
 \setlength{\gwbar@bottompadding@withsubtitle}{0pt}
-\setlength{\gwbar@headlinewidth@given}{\textwidth}
 
 
 \@ifclassloaded{beamer}{
@@ -61,6 +60,7 @@
     % -- that does not make sense here for comparisons later in code.
     \setlength{\gwbar@signalheight}{2em}  % Set some default
     
+    \setlength{\gwbar@headlinewidth@given}{\paperwidth}
     \setlength{\gwbar@headlinewidth}{\paperwidth}
 
     \toggletrue{gwbar@declaretitlebox}
@@ -74,7 +74,8 @@
     \def\gwbar@signalheight@given{\headheight}
     \setlength{\gwbar@signalheight}{2em}  % Set some default
 
-    \setlength{\gwbar@headlinewidth}{\gwbar@headlinewidth@given}
+    \setlength{\gwbar@headlinewidth@given}{\textwidth}
+    \setlength{\gwbar@headlinewidth}{\textwidth}
 
     \togglefalse{gwbar@declaretitlebox}
     \togglefalse{gwbar@progressbar}
@@ -94,7 +95,7 @@
 \DeclareOptionX{declaretitlebox}{\settoggle{gwbar@declaretitlebox}{#1}}
 \DeclareOptionX{backgroundsignal}{\renewcommand{\gwbar@backgroundtemplatefilename}{#1}}
 \DeclareOptionX{progressbar}{\settoggle{gwbar@progressbar}{#1}}
-\DeclareOptionX{headlinewidth}{\setlength{\gwbar@headlinewidth@given}{#1}}
+\DeclareOptionX{headwidth}{\setlength{\gwbar@headlinewidth@given}{#1}}
 \ProcessOptionsX
 
 
@@ -236,7 +237,7 @@
 
 
         \iftoggle{gwbar@declaretitlebox}{
-            \ifx\insertframesubtitle\@empty%
+            \ifx\insertframesubtitle\@empty
                 % -- Important in case where signalupshift is non-zero (and if no framesubtitle is set)
                 \ifdim\gwbar@signalupshift=0pt
                 \else
@@ -421,6 +422,7 @@
         }{%
             \setlength{\gwbar@signalheight}{\gwbar@signalheight@given}%
         }%
+        \setlength{\gwbar@headlinewidth}{\gwbar@headlinewidth@given}%
         \setlength{\gwbar@signalwidth}{\gwbar@headlinewidth - \gwbar@leftpadding - \gwbar@rightpadding}%
         % \setlength{\gwbar@yshiftpicture}{\gwbar@signalupshift}%
         \setlength{\gwbar@yshiftpicture}{0pt}%

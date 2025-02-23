@@ -1,10 +1,24 @@
 # GWBar
 
-A gravitational-wave progressbar template for LaTeX beamer presentations.
+A gravitational-wave headline and progressbar template for LaTeX files and
+LaTeX beamer presentations.
 
 ## Usage
 
-To import and activate the template, run e.g.
+To import and activate the template in a "normal" LaTeX file, run e.g.
+
+```latex
+\usepackage[
+    % Options
+]{gwbar}
+\ihead{\gwbar[]{}Header Text}
+```
+
+(in files that use a KOMA-script documentclass). The `fancyhdr` package can be
+used in a similar way. When testing this package, this turned out to be the
+most versatile (and natural) way of providing the aspired functionality.
+
+Similarly, to activate it in a beamer file, run e.g.
 
 ```latex
 \usepackage[
@@ -13,8 +27,8 @@ To import and activate the template, run e.g.
 \setbeamertemplate{frametitle}[gwbar]
 ```
 
-For this to work, the `.sty` and `.txt` files in this repository have to
-be either in the same directory as the corresponding LaTeX file or in a
+For both of them to work, the `.sty` and `.txt` files in this repository have
+to be either in the same directory as the corresponding LaTeX file or in a
 directory where your LaTeX distribution finds them. The location of the
 `.txt` can also be given as an argument to the package (called `templatefile`).
 
@@ -32,24 +46,39 @@ everything is calculated correctly by zooming in on the transitions.
 ### Arguments
 
 In place of a separate documentation pdf, the few existing options for the
-package will be discussed here:
+package will be discussed here (apologies for my laziness):
 
 - `templatefile`: the file used for plotting. Must adhere the TikZ requirements
   on the `plot file` function: two colums of equal length, with the first one
   representing x-data and second one representing y-data. As mentioned in the
   text, for proper displaying there are constraints on the values in this file.
 
+  A value of `"none"` is used to encode that a flat line shall be drawn.
+
+- `backgroundsignal`: a file that is plotted in the background of the
+  `templatefile` and can thus represent underlying data (and, if the
+  progressbar is activated, be "recovered" by it as part of the progressbar).
+
+- `progressbar`: whether the package is used as a progressbar. Only has an
+  effect in beamer files (it is forced to be disabled in other files), where
+  it can be set to `true` (the default) or `false`.
+
 - `leftpadding`: starting point of signal on the frame, i.e. spacing between
   left end of the frame and beginning of the signal (which coincides with
-  the point where the progressbar starts). Default is `0.6\textwidth`.
+  the point where the progressbar starts). Default is `0.6\textwidth` in
+  beamer files and `0.45\textwidth` otherwise.
 
 - `rightpadding`: end point of signal on the frame, i.e. spacing between
-  right end of the frame and end of the signal. Default is `0.1\paperwidth`.
+  right end of the frame and end of the signal. Default is `0.1\paperwidth`
+  in beamer files and `0.05\textwidth` otherwise.
 
-- `signalheight`: height of the plotted signal. By default, the signal will be
-  plotted so that it touches the upper end of the frame (the corresponding
-  option value is `"frametitleheight"`). To have the signal touch the lower end
-  of the framesubtitle (which will usually be crossed for the default setting),
+- `signalheight`: height of the plotted signal(measured from zero, i.e. the total
+  signal height is twice of this). Defaults to `\headheight` in non-beamer files.
+  
+  In beamer files, on the other hand, the signal will be plotted so that it
+  touches the upper end of the frame (the corresponding option value is
+  `"frametitleheight"`). To have the signal touch the lower end of the
+  framesubtitle (which will usually be crossed for the default setting),
   `"framesubtitleheight"` can be given. It is also possible to pass any other
   length for a fixed, custom height. Note that the two strings mentioned here
   should be the most robust options, as they calculate the length on each frame
@@ -57,11 +86,21 @@ package will be discussed here:
   
   To adjust the height manually in between frames, pass a length variable to
   `signalheight` and change the value of this variable accordingly (cf. the
-  `examples/signalheight_example` file).
+  `signalheight_example` examples file).
 
 - `signalupshift`: controls how much separation is between the lower end of the
   frametitle part (upper end of framesubtitle) and the progressbar. Default is
-  3pt, so that the progressbar does not intersect with the framesubtitle.
+  `3pt`, so that the progressbar does not intersect with the framesubtitle.
+
+- `headwidth`: total width of the line drawn (signal plus padding). In beamer
+  files, you will probably not want to mess with this setting and stick to the
+  default value of `\paperwidth`.
+  
+  In other files, it defaults to the LaTeX default of `\textwidth`, but might
+  be changed manually and in that case, the package needs to know this.
+  Unfortunately, I could not find a robust automatic way of getting this length
+  (due to the many different possible classes and packages that could be used
+  to control is), so it must be passed manually.
 
 - `bottompaddingnosubtitle`, `bottompaddingwithsubtitle`: padding applied after
   the template. This requires two options because it might be desirable to apply
@@ -69,35 +108,33 @@ package will be discussed here:
   padding at all is that the signal might overlap with the first text row
   otherwise, which is visually not very pleasing.
 
-- `declaretitlebox`: whether or not the frametitle is replaced. Among other
-  things, this determines whether `signalheight="frametitle", "framesubtitle"`
-  work (works `declaretitlebox=true`, the default).
+- `declaretitlebox`: determines whether or not the frametitle is replaced,
+  meaning it only takes an effect in beamer files (it is forced to be
+  disabled in other files). Among other things, this setting determines whether
+  `signalheight="frametitle", "framesubtitle"` work, which is true by default
+  in beamer files.
   
   In case `declaretitlebox=false`, there are several ways that the progressbar
-  can still be used. Instead of operating on the frametitle (as in the example
-  shown at the beginning of this file), one must use
+  can still be used in beamer files. One can still employ the `\gwbar` command via
+
+  ```latex
+  \addtobeamertemplate{frametitle}{}{\gwbar}
+  ```
+  
+  or, instead of operating on the frametitle, stick to
 
   ```latex
   \setbeamertemplate{headline}[gwbar]
   ```
 
-  or employ the `\gwbar` command via
-
-  ```latex
-  \addtobeamertemplate{frametitle}{}{\gwbar}
-  ```
-
   (though some subtleties might apply in both cases). Please refer to the
   `examples/headline_demo` and `examples/headline_demo_advanced` files
-  for more details. One problem is that teh headline is considered to be a part
+  for more details. One problem is that the headline is considered to be a part
   of the frame, while the frametitle is considered part of the content. This
   leads to the frametitle being put on top of headline, in other words: if you
   have some title template that has a certain color and try to draw the headline,
   this won't work. Alternatively, adding to the frametitle or other layers of
   the frame may be used thanks to the `\gwbar` command.
-
-- `backgroundsignal`: a file that is plotted in the background of the
-  `templatefile` and can thus be "recovered" by it as part of the progressbar.
 
 - Styling: albeit not being a direct option that can be passed, it is possible
   to change the progressbar style by editing the corresponding TikZ styles:
@@ -106,8 +143,9 @@ package will be discussed here:
   \tikzset{<style name>/.style={<style options>}}
   ```
 
-  (cf. the `examples/style_example` file). Styles used by the template are
-  `gwbar@linelayerone`, `gwbar@linelayertwo`, `gwbar@fillinglayer`.
+  (cf. the `style_example` files). Styles used by the template are
+  `gwbar@linestyle`, `gwbar@bglinestyle`, and for beamer files also
+  `gwbar@fillinglayer`.
 
 ### Examples
 

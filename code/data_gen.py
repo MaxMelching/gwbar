@@ -35,24 +35,24 @@ h_series *= taper_window_2
 # signal_export(h_series - h_template_series, join(FILE_DIR, 'noise.txt'), normalize_amplitude=False, normalize_times=False)
 
 
-# from gw_signal_tools.PSDs import psd_gw150914
-from gw_signal_tools.waveform import get_signal_at_target_frequs, fd_to_td, td_to_fd, fill_f_range
+# from gw_signal_tools.PSDs import asd_gw150914
+from gw_signal_tools.waveform import signal_at_xindex, fd_to_td, td_to_fd, fill_x_range
 
 data = np.loadtxt(join(FILE_DIR, 'psd-H.txt'))
 from gwpy.frequencyseries import FrequencySeries
-psd_gw150914 = np.sqrt(FrequencySeries(data[:, 1], frequencies=data[:, 0]))
+asd_gw150914 = np.sqrt(FrequencySeries(data[:, 1], frequencies=data[:, 0]))
 
 
 h_template_fd = td_to_fd(h_template_series)
 print(h_template_series.epoch, h_template_fd.epoch)
 
-h_template_series_whiten_fd = h_template_fd / get_signal_at_target_frequs(psd_gw150914, h_template_fd.frequencies)
-h_template_series_whiten_fd = fill_f_range(
+h_template_series_whiten_fd = h_template_fd / signal_at_xindex(asd_gw150914, h_template_fd.frequencies)
+h_template_series_whiten_fd = fill_x_range(
     h_template_series_whiten_fd,
     fill_val=0.,
     # fill_bounds=[20*u.Hz, 1023*u.Hz]
-    fill_bounds=[10*u.Hz, 1023*u.Hz]
-    # fill_bounds=[20*u.Hz, 420*u.Hz]
+    # fill_bounds=[10*u.Hz, 1023*u.Hz]
+    fill_bounds=[35*u.Hz, 350*u.Hz]  # Analysis bounds quoted in guide notebook
 )
 
 
@@ -61,6 +61,25 @@ h_template_series_whiten /= h_template_series_whiten.abs().max()
 
 taper_window_3 = windows.tukey(len(h_template_series_whiten), alpha=.25)
 h_template_series_whiten *= taper_window_3
+
+
+h_series_fd = td_to_fd(h_series)
+
+h_series_whiten_fd = h_series_fd / signal_at_xindex(asd_gw150914, h_series_fd.frequencies)
+h_series_whiten_fd = fill_x_range(
+    h_series_whiten_fd,
+    fill_val=0.,
+    # fill_bounds=[20*u.Hz, 1023*u.Hz]
+    # fill_bounds=[10*u.Hz, 1023*u.Hz]
+    fill_bounds=[35*u.Hz, 350*u.Hz]  # Analysis bounds quoted in guide notebook
+)
+
+
+h_series_whiten = fd_to_td(h_series_whiten_fd)
+h_series_whiten /= h_series_whiten.abs().max()
+
+taper_window_3p5 = windows.tukey(len(h_series_whiten), alpha=.25)
+h_series_whiten *= taper_window_3p5
 
 
 # -- Resampling
@@ -80,17 +99,26 @@ h_template_series /= normalize
 signal_export(h_series, join(FILE_DIR, 'generic_template_w_noise.txt'), normalize_amplitude=False)
 signal_export(h_template_series, join(FILE_DIR, 'generic_template_no_noise.txt'), normalize_amplitude=False)
 
+h_series_whiten = h_series_whiten.resample(target_srate) #/ normalize
+signal_export(h_series_whiten, join(FILE_DIR, 'generic_template_w_noise_whitened.txt'), normalize_amplitude=False)
 h_template_series_whiten = h_template_series_whiten.resample(target_srate) #/ normalize
 signal_export(h_template_series_whiten, join(FILE_DIR, 'generic_template_no_noise_whitened.txt'), normalize_amplitude=False)
 # -- I think storing noise with whitened template is better
-signal_export(h_series - h_template_series_whiten, join(FILE_DIR, 'noise.txt'), normalize_amplitude=False, normalize_times=False)
+# signal_export(h_series - h_template_series_whiten, join(FILE_DIR, 'noise.txt'), normalize_amplitude=False, normalize_times=False)
+signal_export(h_series - h_template_series, join(FILE_DIR, 'noise.txt'), normalize_amplitude=False, normalize_times=False)
+signal_export(h_series_whiten - h_template_series_whiten, join(FILE_DIR, 'noise_whiten.txt'), normalize_amplitude=False, normalize_times=False)
 
 
 plt.figure(figsize=(12, 6))
 plt.plot(h_series)
 plt.plot(h_template_series)
+plt.plot(h_series - h_template_series)
+plt.show()
+
+plt.figure(figsize=(12, 6))
+plt.plot(h_series_whiten)
 plt.plot(h_template_series_whiten)
-plt.plot(h_series - h_template_series_whiten)
+plt.plot(h_series_whiten - h_template_series_whiten)
 plt.show()
 
 
@@ -105,7 +133,8 @@ noise_series = TimeSeries(noise_file[:, 1], times=noise_file[:, 0])
 reweight = nr_series.abs().max()
 inject_noise = TimeSeries(
     # reweight * noise_series.value[::-1],
-    1.2 * reweight * noise_series.value,
+    # 1.2 * reweight * noise_series.value,
+    reweight * noise_series.value,
     times=np.linspace(nr_series.times[0], nr_series.times[-1], num=len(noise_series))
 )
 inject_noise = inject_noise.resample(1./nr_series.dt)

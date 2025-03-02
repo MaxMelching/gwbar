@@ -10,4 +10,4 @@
 *.toc
 
 # -- Python cludder
-__pycache__
+*__pycache__*

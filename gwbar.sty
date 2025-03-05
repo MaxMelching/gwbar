@@ -35,10 +35,6 @@
 \newlength{\gwbar@headlinewidth@given}
 \newlength{\gwbar@headlinewidth}
 
-\newlength{\gwbar@linestyle@linewidth}
-\newlength{\gwbar@bglinestyle@linewidth}
-\newlength{\gwbar@linewidthshift}
-
 
 % -- Set sensible defaults
 \setlength{\gwbar@bottompadding}{0pt}
@@ -204,39 +200,6 @@
         % -- (which is why we often have part one and two). Also, spaces don't
         % -- matter in tikzpictures, so at least no issues with that.
 
-
-        % -- Get maximum linewidth of stuff, so that covering works properly.
-        % -- NOTE: setlength alone does not work because scope is local. To set
-        % -- globally, in a way compatible with the calc package, we need some extras.
-        % -- Cf. https://tex.stackexchange.com/questions/119730/global-scope-or-permanent-length-or-savebox
-        \begin{scope}[gwbar@linestyle]
-            \setlength{\gwbar@linestyle@linewidth}{\pgflinewidth}
-            \global\gwbar@linestyle@linewidth=\gwbar@linestyle@linewidth
-        \end{scope}
-        \begin{scope}[gwbar@bglinestyle]
-            \setlength{\gwbar@bglinestyle@linewidth}{\pgflinewidth}
-            \global\gwbar@bglinestyle@linewidth=\gwbar@bglinestyle@linewidth
-        \end{scope}
-        % NOTE: \pgfkeysifdefined would not work if value is thick, we need numerical value
-        \pgfmathsetmacro{\gwbar@maxlinewidth}{max(\gwbar@linestyle@linewidth, \gwbar@bglinestyle@linewidth)}
-        \setlength{\gwbar@linewidthshift}{\gwbar@maxlinewidth pt + \gwbar@maxlinewidth pt}  % Take double as safety bed
-
-
-        % % -- Account for linewidth in fitting of heights
-        % \ifthenelse{\equal{\gwbar@signalheight@given}{"frametitleheight"}}{
-        %     \addtolength{\gwbar@signalheight}{-\gwbar@maxlinewidth pt}
-        %     % \addtolength{\gwbar@signalheight}{-\gwbar@linewidthshift}
-        % }{
-        %     \ifthenelse{\equal{\gwbar@signalheight@given}{"framesubtitleheight"}}{
-        %         \addtolength{\gwbar@signalheight}{-\gwbar@maxlinewidth pt}
-        %         % \addtolength{\gwbar@signalheight}{-\gwbar@linewidthshift}
-        %     }{
-        %         % -- If custom signalheight is given, we don't mess with that
-        %     }
-        % }
-        % TODO: is this still required? I mean we clip, might look strange if we do not account for it...
-
-
         \iftoggle{gwbar@declaretitlebox}{
             \ifx\insertframesubtitle\@empty
                 % -- Important in case where signalupshift is non-zero (and if no framesubtitle is set)
@@ -261,8 +224,9 @@
         ]
             \ifthenelse{\equal{\gwbar@backgroundtemplatefilename}{"none"}}{
                 \iftoggle{gwbar@progressbar}{
-                    \clip ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, -1) rectangle ({\gwbar@signalwidth + \gwbar@rightpadding}, 1);
-                    
+                    \clip ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, -5) rectangle ({\gwbar@signalwidth + \gwbar@rightpadding}, 5);
+                    % -- y is not +-1 to make sure we do not clip signal off, 1 would not account for linewidth
+
                     \ifthenelse{\equal{\gwbar@templatefilename}{"none"}}{
                         \draw[
                         ] (0, 0) -- (\gwbar@signalwidth, 0);
@@ -303,7 +267,8 @@
                 shift={(\gwbar@leftpadding, 0pt)},  % Shifting here is important for clipping to work
             ]
                 \iftoggle{gwbar@progressbar}{
-                    \clip (0, -1) rectangle ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 1);
+                    \clip (0, -5) rectangle ({(\gwbar@signalwidth + \gwbar@rightpadding) * \insertframenumber / \inserttotalframenumber}, 5);
+                    % -- y is not +-1 to make sure we do not clip signal off, 1 would not account for linewidth
                 }{}
 
                 \ifthenelse{\equal{\gwbar@templatefilename}{"none"}}{

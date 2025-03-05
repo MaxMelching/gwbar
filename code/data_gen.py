@@ -76,10 +76,10 @@ h_series_whiten_fd = fill_x_range(
 
 
 h_series_whiten = fd_to_td(h_series_whiten_fd)
-h_series_whiten /= h_series_whiten.abs().max()
 
 taper_window_3p5 = windows.tukey(len(h_series_whiten), alpha=.25)
 h_series_whiten *= taper_window_3p5
+h_series_whiten /= h_series_whiten.abs().max()
 
 
 # -- Resampling

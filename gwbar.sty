@@ -10,6 +10,8 @@
 \ProvidesPackage{gwbar}
 
 % -- Option definitions
+\RequirePackage{etoolbox}
+
 \newcommand{\gwbar@templatefilename}{"generic_template.txt"}
 
 \newlength{\gwbar@leftpadding}  % Where signal starts, measured from left end of frame
@@ -21,18 +23,17 @@
 
 \newlength{\gwbar@yshiftpicture}  % Calculated automatically in template
 
-\newlength{\gwbar@bottompadding}
+\newlength{\gwbar@bottompadding}  % Spacing that is applied below the gwbar (global; can also be controlled separately for frames with/without subtitle)
 \newlength{\gwbar@bottompadding@nosubtitle}
 \newlength{\gwbar@bottompadding@withsubtitle}
 
-\RequirePackage{etoolbox}
-\newtoggle{gwbar@declaretitlebox}
+\newtoggle{gwbar@declaretitlebox}  % Determines if frametitle or headline template is provided for beamer files
 
 \def\gwbar@backgroundtemplatefilename{"none"}
 
-\newtoggle{gwbar@progressbar}
+\newtoggle{gwbar@progressbar}  % Whether progressbar effect is visible in beamer files
 
-\newlength{\gwbar@headlinewidth@given}
+\newlength{\gwbar@headlinewidth@given}  % Controls total width of lines drawn
 \newlength{\gwbar@headlinewidth}
 
 
@@ -78,7 +79,7 @@
 }
 
 
-% -- Define package options
+% -- Define and process package options
 \RequirePackage{xkeyval}
 \DeclareOptionX{templatefile}{\renewcommand{\gwbar@templatefilename}{#1}}
 \DeclareOptionX{leftpadding}{\setlength{\gwbar@leftpadding}{#1}}

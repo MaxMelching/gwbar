@@ -31,6 +31,7 @@ For both of them to work, the `.sty` and `.txt` files in this repository have
 to be either in the same directory as the corresponding LaTeX file or in a
 directory where your LaTeX distribution finds them. The location of the
 `.txt` can also be given as an argument to the package (called `templatefile`).
+For details on this, please have a look at the [Installation section](#installation).
 
 It is possible to use any waveform you want in the presentation. The only
 requirement for the displaying to work properly is that the values are
@@ -42,6 +43,27 @@ have some GWPy ``TimeSeries`` on hand, this preparation can be done using
 this will typically disappear in the exported pdf. I do not know why this
 happens, but I have experienced it several times. You can confirm that
 everything is calculated correctly by zooming in on the transitions.
+
+## Installation
+
+Unfortunately, adding LaTeX packages is not as easy as Python packages. I do not
+claim to be an expert in this, but here are two ways I have found to make this work:
+
+1. putting the relevant `.sty` files into the same directory as the `.tex` you
+   plan to use them in. Then, `\usepackage{gwbar}` works. If your
+   folder structure is slightly more complicated, something like
+   `\usepackage{../gwbar}` works too (despite some complaints by LaTeX).
+   This is also the preferred way in case you are using Overleaf.
+
+1. setting the `TEXINPUTS` variable in your shell, so that the `pdflatex` command
+   can find the `.sty` files in this respository. You can do this manually, or
+   by running the `install.sh` script that comes with this repository, which does
+   this in bash. To confirm that it worked, restart your shell and run
+   `kpsewhich gwbar.sty` (should yield this repository).
+
+The `.txt` files must simply be in a location where you can find them, since
+their path is expected as an argument. I could not find a way of dealing with
+this using something like `TEXINPUTS`.
 
 ### Arguments
 

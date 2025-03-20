@@ -9,9 +9,10 @@ To import and activate the template in a "normal" LaTeX file, run e.g.
 
 ```latex
 \usepackage[
-    % Options
+    option=value,
+    ...,
 ]{gwbar}
-\ihead{\gwbar[]{}Header Text}
+\ihead{\gwbar[option=value]{}Header Text}
 ```
 
 (in files that use a KOMA-script documentclass). The `fancyhdr` package can be
@@ -22,12 +23,13 @@ Similarly, to activate it in a beamer file, run e.g.
 
 ```latex
 \usepackage[
-    % Options
+    option=value,
+    ...,
 ]{gwbar}
 \setbeamertemplate{frametitle}[gwbar]
 ```
 
-For both of them to work, the `.sty` and `.txt` files in this repository have
+For either of them to work, the `.sty` and `.txt` files in this repository have
 to be either in the same directory as the corresponding LaTeX file or in a
 directory where your LaTeX distribution finds them. The location of the
 `.txt` can also be given as an argument to the package (called `templatefile`).
@@ -168,6 +170,13 @@ package will be discussed here (apologies for my laziness):
   (cf. the `style_example` files). Styles used by the template are
   `gwbar@linestyle`, `gwbar@bglinestyle`, and for beamer files also
   `gwbar@fillinglayer`.
+
+*Note:* besides giving them to calls of the `gwbar` package or command, you
+can also change options by using the `\UpdateGWBarOptions[option=value]` command.
+However, be careful when inserting a new line between `[` and the first option,
+this may yield an error because the new line is interpreted as a space. This
+can be solved by adding a percent sign after the bracket opening, i.e. using `[%`
+and then opening up a new line (the same applies to calls of `\gwbar[...]`).
 
 ### Examples
 

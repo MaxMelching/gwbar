@@ -26,12 +26,18 @@
 This is the first slide
 \end{frame}
 
-\setlength{\customheight}{2em}  % Only relevant for signalheight=\customheight
+% \setlength{\customheight}{2em}  % Only relevant for signalheight=\customheight
+% -- Here we use the following alternative:
+\UpdateGWBarOptions[signalheight=2em]
 \begin{frame}[t]{Frame Title}{Frame Subtitle}
 Slide number 2
 \end{frame}
+\UpdateGWBarOptions[%
+    signalheight=\customheight,
+]  % Resetting to length variable
 
-\setlength{\customheight}{3em}  % Only relevant for signalheight=\customheight
+
+\setlength{\customheight}{4em}  % Only relevant for signalheight=\customheight
 \begin{frame}[t]{Frame Title}
 Another slide
 \end{frame}

@@ -116,9 +116,15 @@
     bottompadding/.estore in = \gwbar@bottompadding,
     bottompaddingnosubtitle/.estore in = \gwbar@bottompadding@nosubtitle,
     bottompaddingwithsubtitle/.estore in = \gwbar@bottompadding@withsubtitle,
-    % declaretitlebox/.code = {\settoggle{gwbar@declaretitlebox}{#1}},
+    declaretitlebox/.code = {\settoggle{gwbar@declaretitlebox}{#1}},
     backgroundsignal/.estore in = \gwbar@backgroundtemplatefilename,
-    % progressbar/.code = {\settoggle{gwbar@progressbar}{#1}},
+    progressbar/.code = {\settoggle{gwbar@progressbar}{#1}},
+    % progressbar/.estore in = \gwbar@progressbar,
+}
+
+
+\newcommand{\UpdateGWBarOptions}[1][]{%
+    \pgfkeys{/gwbar, #1}%
 }
 
 

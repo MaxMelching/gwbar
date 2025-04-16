@@ -183,22 +183,33 @@
 
 
 
-\newcommand{\gwbar@gettikzpicture}{%
+% -- Define custom environment, more robust than if statement so start env in \gwbar@gettikzpicture
+% \newenvironment{gwbartikzpicture}[1][]{%
+\newenvironment{gwbartikzpicture}{%
     \@ifclassloaded{beamer}{%
         \begin{tikzpicture}[
+            % #1,
             remember picture,
             overlay,
-            shift={($(current page.north west)+({(\paperwidth - \gwbar@totalwidth)/2},\gwbar@yshiftpicture)$)},  % Centered in x-direction
-            % shift={($(current page.north west)+(0,\gwbar@yshiftpicture)$)},  % Centered in x-direction
-        ]%
+            % shift={($(current page.north west)+({(\paperwidth - \gwbar@totalwidth)/2},\gwbar@yshiftpicture)$)},  % Centered in x-direction
+            shift={($(current page.north west)+(0,\gwbar@yshiftpicture)$)},
+        ]
     }{%
         \begin{tikzpicture}[
+            % #1,
             remember picture,
             overlay,
-            % shift={($(current page.north west)+(0pt,\gwbar@yshiftpicture)$)},
-            shift={($({(\textwidth - \gwbar@totalwidth)/2},0)$)},  % Centered in x-direction
+            % shift={($({(\textwidth - \gwbar@totalwidth)/2},0)$)},  % Centered in x-direction
         ]%
     }%
+}{%
+    \end{tikzpicture}
+}
+
+
+
+\newcommand{\gwbar@gettikzpicture}{%
+    \begin{gwbartikzpicture}
         % -- NOTE: order in this picture matters for color and overlay etc
         % -- (which is why we often have part one and two). Also, spaces don't
         % -- matter in tikzpictures, so at least no issues with that.
@@ -287,7 +298,7 @@
             ] ({\gwbar@totalwidth - \gwbar@rightpadding}, 0) -- (\gwbar@totalwidth, 0);
             \end{scope}
         \end{scope}
-    \end{tikzpicture}%
+    \end{gwbartikzpicture}%
 }
 
 

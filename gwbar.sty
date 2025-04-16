@@ -23,8 +23,7 @@
 
 \newlength{\gwbar@yshiftpicture}  % Calculated automatically in template
 
-\newlength{\gwbar@bottompadding}  % Spacing that is applied below the gwbar (global; can also be controlled separately for frames with/without subtitle)
-\newlength{\gwbar@bottompadding@nosubtitle}
+\newlength{\gwbar@bottompadding@nosubtitle}  % Spacings that are applied below the gwbar (can be controlled separately for frames with/without subtitle)
 \newlength{\gwbar@bottompadding@withsubtitle}
 
 \newtoggle{gwbar@declaretitlebox}  % Determines if frametitle or headline template is provided for beamer files
@@ -37,7 +36,6 @@
 
 
 % -- Set sensible defaults
-\setlength{\gwbar@bottompadding}{0pt}
 \setlength{\gwbar@bottompadding@nosubtitle}{0pt}
 \setlength{\gwbar@bottompadding@withsubtitle}{0pt}
 
@@ -83,7 +81,6 @@
 \DeclareOptionX{rightpadding}{\setlength{\gwbar@rightpadding}{#1}}
 \DeclareOptionX{signalheight}{\renewcommand{\gwbar@signalheight@given}{#1}}
 \DeclareOptionX{signalupshift}{\setlength{\gwbar@signalupshift}{#1}}
-\DeclareOptionX{bottompadding}{\setlength{\gwbar@bottompadding}{#1}}
 \DeclareOptionX{bottompaddingnosubtitle}{\setlength{\gwbar@bottompadding@nosubtitle}{#1}}
 \DeclareOptionX{bottompaddingwithsubtitle}{\setlength{\gwbar@bottompadding@withsubtitle}{#1}}
 \DeclareOptionX{declaretitlebox}{\settoggle{gwbar@declaretitlebox}{#1}}
@@ -110,7 +107,6 @@
     rightpadding/.estore in = \gwbar@rightpadding,
     signalheight/.estore in = \gwbar@signalheight@given,
     signalupshift/.estore in = \gwbar@signalupshift,
-    bottompadding/.estore in = \gwbar@bottompadding,
     bottompaddingnosubtitle/.estore in = \gwbar@bottompadding@nosubtitle,
     bottompaddingwithsubtitle/.estore in = \gwbar@bottompadding@withsubtitle,
     declaretitlebox/.code = {\settoggle{gwbar@declaretitlebox}{#1}},
@@ -406,7 +402,6 @@
     }% 
     % 
     % -- Account for some of the offset, while not pushing into the signal
-    % \vspace*{-\gwbar@signalupshift}% TODO: decide whether this helps
     \@ifclassloaded{beamer}{%
         \ifx\insertframesubtitle\@empty%
             % \vspace*{0.25\gwbar@signalheight}%
@@ -414,10 +409,10 @@
         \else%
             \vspace*{\gwbar@bottompadding@withsubtitle}%
         \fi%
-    }{%
-    }%
-    % -- bottompadding is added on top of withsubtitle/nosubtitle
-    \vspace*{\gwbar@bottompadding}%
+    }{}%
+    % -- Any desired offset can added using \addtobeamertemplate for beamer files
+    % -- or using commands like \setlength{\headheight}{<input>} in other
+    % -- LaTeX classes, possibly in combination with signalupshift.
 }
 
 

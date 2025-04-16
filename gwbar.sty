@@ -33,8 +33,7 @@
 
 \newtoggle{gwbar@progressbar}  % Whether progressbar effect is visible in beamer files
 
-\newlength{\gwbar@headlinewidth@given}  % Controls total width of lines drawn
-\newlength{\gwbar@headlinewidth}
+\newlength{\gwbar@totalwidth}  % Controls total width of lines drawn
 
 
 % -- Set sensible defaults
@@ -57,8 +56,7 @@
     % -- that does not make sense here for comparisons later in code.
     \setlength{\gwbar@signalheight}{2em}  % Set some default
     
-    \setlength{\gwbar@headlinewidth@given}{\paperwidth}
-    \setlength{\gwbar@headlinewidth}{\paperwidth}
+    \setlength{\gwbar@totalwidth}{\paperwidth}
 
     \toggletrue{gwbar@declaretitlebox}
     \toggletrue{gwbar@progressbar}
@@ -71,8 +69,7 @@
     \def\gwbar@signalheight@given{\headheight}
     \setlength{\gwbar@signalheight}{2em}  % Set some default
 
-    \setlength{\gwbar@headlinewidth@given}{\textwidth}
-    \setlength{\gwbar@headlinewidth}{\textwidth}
+    \setlength{\gwbar@totalwidth}{\textwidth}
 
     \togglefalse{gwbar@declaretitlebox}
     \togglefalse{gwbar@progressbar}
@@ -92,7 +89,7 @@
 \DeclareOptionX{declaretitlebox}{\settoggle{gwbar@declaretitlebox}{#1}}
 \DeclareOptionX{backgroundsignal}{\renewcommand{\gwbar@backgroundtemplatefilename}{#1}}
 \DeclareOptionX{progressbar}{\settoggle{gwbar@progressbar}{#1}}
-\DeclareOptionX{headwidth}{\setlength{\gwbar@headlinewidth@given}{#1}}
+\DeclareOptionX{totalwidth}{\setlength{\gwbar@totalwidth}{#1}}
 \ProcessOptionsX
 
 
@@ -120,6 +117,7 @@
     backgroundsignal/.estore in = \gwbar@backgroundtemplatefilename,
     progressbar/.code = {\settoggle{gwbar@progressbar}{#1}},
     % progressbar/.estore in = \gwbar@progressbar,
+    totalwidth/.estore in = \gwbar@totalwidth,
 }
 
 
@@ -194,13 +192,15 @@
         \begin{tikzpicture}[
             remember picture,
             overlay,
-            shift={($(current page.north west)+(0pt,\gwbar@yshiftpicture)$)},
+            shift={($(current page.north west)+({(\paperwidth - \gwbar@totalwidth)/2},\gwbar@yshiftpicture)$)},  % Centered in x-direction
+            % shift={($(current page.north west)+(0,\gwbar@yshiftpicture)$)},  % Centered in x-direction
         ]%
     }{%
         \begin{tikzpicture}[
             remember picture,
             overlay,
             % shift={($(current page.north west)+(0pt,\gwbar@yshiftpicture)$)},
+            shift={($({(\textwidth - \gwbar@totalwidth)/2},0)$)},  % Centered in x-direction
         ]%
     }%
         % -- NOTE: order in this picture matters for color and overlay etc
@@ -257,7 +257,7 @@
         
             \draw[
                 shift={(-\gwbar@leftpadding, 0pt)},
-            ] ({\gwbar@headlinewidth - \gwbar@rightpadding}, 0) -- (\gwbar@headlinewidth, 0);
+            ] ({\gwbar@totalwidth - \gwbar@rightpadding}, 0) -- (\gwbar@totalwidth, 0);
         \end{scope}
         
         % -- Plot part of signal that is visible for current progress
@@ -288,7 +288,7 @@
             
             \draw[
                 shift={(-\gwbar@leftpadding, 0pt)},
-            ] ({\gwbar@headlinewidth - \gwbar@rightpadding}, 0) -- (\gwbar@headlinewidth, 0);
+            ] ({\gwbar@totalwidth - \gwbar@rightpadding}, 0) -- (\gwbar@totalwidth, 0);
             \end{scope}
         \end{scope}
     \end{tikzpicture}%
@@ -348,7 +348,7 @@
         % 
         \setlength{\gwbar@yshiftpicture}{-\gwbar@frametitleheightnosubtitle}%
         % 
-        \setlength{\gwbar@signalwidth}{\gwbar@headlinewidth - \gwbar@leftpadding - \gwbar@rightpadding}%
+        \setlength{\gwbar@signalwidth}{\gwbar@totalwidth - \gwbar@leftpadding - \gwbar@rightpadding}%
         \ifthenelse{\equal{\gwbar@signalheight@given}{"frametitleheight"}}{%
             \setlength{\gwbar@signalheight}{\gwbar@frametitleheightnosubtitle - \gwbar@signalupshift}%
             % -- -\gwbar@signalupshift to account for potential asymmetry.
@@ -395,8 +395,7 @@
         }{%
             \setlength{\gwbar@signalheight}{\gwbar@signalheight@given}%
         }%
-        \setlength{\gwbar@headlinewidth}{\gwbar@headlinewidth@given}%
-        \setlength{\gwbar@signalwidth}{\gwbar@headlinewidth - \gwbar@leftpadding - \gwbar@rightpadding}%
+        \setlength{\gwbar@signalwidth}{\gwbar@totalwidth - \gwbar@leftpadding - \gwbar@rightpadding}%
         % \setlength{\gwbar@yshiftpicture}{\gwbar@signalupshift}%
         \setlength{\gwbar@yshiftpicture}{0pt}%
         % -- Could just use signalupshift in options below, but I can see
@@ -404,7 +403,7 @@
         % 
         \gwbar@gettikzpicture{}%
         %
-    }
+    }% 
     % 
     % -- Account for some of the offset, while not pushing into the signal
     % \vspace*{-\gwbar@signalupshift}% TODO: decide whether this helps

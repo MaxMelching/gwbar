@@ -37,7 +37,18 @@
 
 % -- To see the impact of bottompadding parameters, add a colored line to the
 % -- end of the template.
-\addtobeamertemplate{frametitle}{}{\par{\color{purple}\rule{\textwidth}{1.5pt}}}
+\makeatletter
+\addtobeamertemplate{frametitle}{}{%
+    % \par%
+    \ifx\insertframesubtitle\@empty%
+        % \vspace*{0.25\gwbar@signalheight}%
+        \vspace*{\gwbar@bottompadding@nosubtitle}%
+    \else%
+        \vspace*{\gwbar@bottompadding@withsubtitle}%
+    \fi%
+    \par{\color{purple}\rule{\textwidth}{1.5pt}}%
+}
+\makeatother
 
 
 

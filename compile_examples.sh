@@ -3,6 +3,8 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DIR1="$SCRIPT_DIR/examples"
 DIR2="$SCRIPT_DIR/presentation_examples"
+# DIR1="$SCRIPT_DIR"  # Placeholder
+# DIR2="$SCRIPT_DIR"  # Placeholder
 
 # -- Function to compile LaTeX files in a given directory
 compile_latex() {

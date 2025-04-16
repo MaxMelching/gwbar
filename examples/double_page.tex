@@ -31,12 +31,18 @@
 \rehead{\pagemark}
 
 % -- NOTE: the corresponding fancyhdr commands would be:
+% \usepackage{fancyhdr}
 % \pagestyle{fancy}
 % \fancyhf{}
-% \fancyhead[LO]{...}
-% \fancyhead[RO]{...}
-% \fancyhead[LE]{...}
-% \fancyhead[RE]{...}
+% \renewcommand{\headrule}{}
+% % \fancyhead[LO]{}
+% % \fancyhead[LO]{\gwbar[templatefile="none"]\pagemark}
+% % \fancyhead[RO]{\gwbar[templatefile="none"]{}\pagemark}
+% \fancyhead[RO]{\leftmark}
+% \fancyhead[LO]{\gwbar[templatefile="none"]{}\pagemark}
+% \fancyhead[LE]{\gwbar{}\leftmark}
+% \fancyhead[RE]{\pagemark}
+% % \fancyhead[RE]{...}
 
 
 % -- NOTE: redefining the gwbar@linestyle here (as in the style_example file)

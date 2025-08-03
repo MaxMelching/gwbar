@@ -53,15 +53,16 @@ claim to be an expert in this, but here are two ways I have found to make this w
 
 1. putting the relevant `.sty` files into the same directory as the `.tex` you
    plan to use them in. Then, `\usepackage{gwbar}` works. If your
-   folder structure is slightly more complicated, something like
+   folder structure is slightly more complicated, a path like
    `\usepackage{../gwbar}` works too (despite some complaints by LaTeX).
    This is also the preferred way in case you are using Overleaf.
 
-1. setting the `TEXINPUTS` variable in your shell, so that the `pdflatex` command
-   can find the `.sty` files in this respository. You can do this manually, or
-   by running the `install.sh` script that comes with this repository, which does
-   this in bash. To confirm that it worked, restart your shell and run
-   `kpsewhich gwbar.sty` (should yield this repository).
+1. for a recipe on how to make the package available on your whole system,
+   please refer to the instructions on
+   [my GitHub](https://github.com/MaxMelching/latex_package_install).
+   (Note that the location of the `.txt` can also be given as an argument to
+   the package, called `templatefile`. Thus you only have to place the
+   `gwbar.sty` file here.)
 
 The `.txt` files must simply be in a location where you can find them, since
 their path is expected as an argument. I could not find a way of dealing with
